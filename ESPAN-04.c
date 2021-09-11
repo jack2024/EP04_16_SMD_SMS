@@ -33,9 +33,15 @@
 
 //#use rs232(baud=9600,parity=N,xmit=PTxD,rcv=PRxD,bits=8,restart_wdt)
 
+///#use rs232(baud=9600,parity=N,xmit=PTxD,rcv=PRxD,bits=8,restart_wdt)
 /* Config and Enable Hardware UART1(RC6=TX1,RC7=RX1 */
 #use rs232(uart1, baud=9600, stream=CH1)
 
+/* Config and Enable Software UART2(RC0=TX2,RC1=RX2 */
+
+#define TX2 PIN_B0                                                            // RC0 = TXD
+#define RX2 PIN_B1                                                            // RC1 = RXD
+#use rs232(baud=9600, xmit=TX2, rcv=RX2,stream=CH2)
 
 /* Config and Enable Software UART2(RC0=TX2,RC1=RX2 */
 /*
@@ -104,6 +110,7 @@ int8 Synctimer = 0x00; //use for debounce sync signal
 //int8 Input1_8;
 //int8 Input9_16;
 
+volatile int1 functointest_f = 0;
 
 int8 Output1_8;
 int8 Output9_16;
@@ -199,14 +206,14 @@ volatile int1 RefreshConfigData =0;
 
 //////////////////////////////////////
 unsigned char const addr_sq = 0x10,end_sq = 0x11,code_sq = 0x12,start_addr_hi_sq = 0x13,start_addr_lo_sq = 0x14;         //serial sequnce
-unsigned char const ubyte_hi_sq = 0x15,ubyte_lo_sq = 0x16,crc_hi_sq = 0x17,byte_count_sq = 0x19,data_sq = 0x20;      //serial sequnce
+unsigned char const ubyte_hi_sq = 0x15, ubyte_lo_sq = 0x16, crc_hi_sq = 0x17,second_numofdata = 0x18, byte_count_sq = 0x19, data_sq = 0x20;      //serial sequnce
 
 int1 recieve_completed = 0;
 unsigned char sequence;         //keep sequence use for RxD
 unsigned char Address;
 unsigned char RxD_DataLen = 0x00;
-unsigned char TxD_Buff[60];
-unsigned char RxD_Buff[60];
+unsigned char TxD_Buff[255];
+unsigned char RxD_Buff[1024];
 unsigned char CRC_Lo;
 unsigned char CRC_Hi;
 int16 Send_check_Time = 500; //if no send reset buffer every 5 second
@@ -214,7 +221,7 @@ int16 Send_check_Time = 500; //if no send reset buffer every 5 second
 int16 Start_Address = 0x0000;
 int16 No_PointCount = 0x0000;
 unsigned char Data_ByteCount = 0x00;
-unsigned char Data_Buff[25];
+unsigned char Data_Buff[1024];
 //unsigned char DataTemp;
 //unsigned char TxD_DataLen;
 
@@ -223,11 +230,32 @@ int8 MCP23s17_Ip_dat;
 int8 MCP23s17_Op_dat;
 
 unsigned char T_timeout;   //use for calculate RxD timeout
-unsigned char index = 0x00;         //use for Loop
+int16 index = 0x00;         //use for Loop
 
 int8 outmcp23 = 0;
 
 volatile int16 MCP23_ReadError =0;
+
+unsigned char sms_phonenumber[15];
+
+//unsigned char SMS_Massage[20][20];
+
+unsigned char SMS_Massage1[32];
+unsigned char SMS_Massage2[32];
+unsigned char SMS_Massage3[32];
+unsigned char SMS_Massage4[32];
+unsigned char SMS_Massage5[32];
+unsigned char SMS_Massage6[32];
+unsigned char SMS_Massage7[32];
+unsigned char SMS_Massage8[32];
+unsigned char SMS_Massage9[32];
+unsigned char SMS_Massage10[32];
+unsigned char SMS_Massage11[32];
+unsigned char SMS_Massage12[32];
+unsigned char SMS_Massage13[32];
+unsigned char SMS_Massage14[32];
+unsigned char SMS_Massage15[32];
+unsigned char SMS_Massage16[32];
 
 unsigned char const CRC_Table_Hi[] = {
 0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41, 0x01, 0xC0, 0x80, 0x41, 0x00, 0xC1, 0x81,
@@ -303,12 +331,14 @@ struct Bit64 OutputBoth;
 struct Bit64 AlarmIndicator,Ack,In,In2;
 struct Bit64 LED_Colour,AckSend,RED_Colour,GREEN_Colour;
 
-int1 FaultAgo[30];
-int1 FaultNow[30];
-int16 ReleaseTime[30];
-int16 FaultDelayTime[30];
+struct Bit64 SendSMS;
 
-int1 FaultNCNO[25];
+int1 FaultAgo[21];
+int1 FaultNow[21];
+int16 ReleaseTime[21];
+int16 FaultDelayTime[21];
+
+int1 FaultNCNO[21];
 #define NO 1
 #define NC 0
 
@@ -348,6 +378,7 @@ void CRC(unsigned char *puchMsg , unsigned char usDataLen)
 }
 
 /********************************6B595 Driver*********************************/
+/*
 void Driver595()
 {
    Signed int8 j=0;
@@ -397,6 +428,7 @@ void Driver595()
    delay_us(1);
    output_low(EXP_OUT_ENABLE);
 }
+*/
 ////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -556,6 +588,11 @@ void checkCommand(void)
           sequence = byte_count_sq ;
           T_timeout = 0x14; //200ms
        }
+       else if(RxD_Buff[RxD_DataLen - 1] == 0x22)   /////SMS setting/////
+       {
+          sequence = second_numofdata ;
+          T_timeout = 0x14; //200ms
+       }
        else                           // Invalid Code
        {
           RxD_DataLen = 0x00;
@@ -563,6 +600,15 @@ void checkCommand(void)
           T_timeout = 0x00;
           output_bit(P485ctrl,0);
        }
+   }
+   else if(sequence == second_numofdata)
+   {
+      RxD_Buff[RxD_DataLen] = SBUF ;      //Byte 3   Start address High Byte
+      restart_wdt();
+      RxD_DataLen ++ ;
+      sequence = byte_count_sq;
+      T_timeout = 0x14; //200ms
+
    }
    else if(sequence == byte_count_sq)
    {
@@ -592,7 +638,6 @@ void checkCommand(void)
       RxD_DataLen ++ ;
       sequence = start_addr_hi_sq;
       T_timeout = 0x14; //200ms
-
    }
    else if(sequence == start_addr_hi_sq)
    {
@@ -886,1215 +931,300 @@ void Modbus_Function(void)
       if(RxD_Buff[0] == Address)
       {
       
-      if(RxD_Buff[1] == 0x01)///////////// READ COIL /////////////////////
-      {
-            //Do Read Coil
-            Start_Address = RxD_Buff[2] ;
-            Start_Address = (Start_Address << 8) | RxD_Buff[3] ;   //Start Address 16 bit
-            No_PointCount = RxD_Buff[4] ;
-            No_PointCount = (No_PointCount << 8) | RxD_Buff[5] ;   //No. of Point 16 bit
-
-            if(Start_Address < 0x10 && (Start_Address + No_PointCount) < 0x11)  //Valid point 0-15
-            {
-               if(No_PointCount < 9) Data_ByteCount = 0x01 ;
-               else if(No_PointCount < 17) Data_ByteCount = 0x02 ;
-               else if(No_PointCount < 25) Data_ByteCount = 0x03 ;
-               else   Data_ByteCount = 0x01 ; //----Jack
-
-               if(Data_ByteCount == 0x01)
+         if(RxD_Buff[1] == 0x01)///////////// READ COIL /////////////////////
+         {
+               //Do Read Coil
+               Start_Address = RxD_Buff[2] ;
+               Start_Address = (Start_Address << 8) | RxD_Buff[3] ;   //Start Address 16 bit
+               No_PointCount = RxD_Buff[4] ;
+               No_PointCount = (No_PointCount << 8) | RxD_Buff[5] ;   //No. of Point 16 bit
+   
+               if(Start_Address < 0x10 && (Start_Address + No_PointCount) < 0x11)  //Valid point 0-15
                {
-
-                  if(Start_Address < 0x09)
+                  if(No_PointCount < 9) Data_ByteCount = 0x01 ;
+                  else if(No_PointCount < 17) Data_ByteCount = 0x02 ;
+                  else if(No_PointCount < 25) Data_ByteCount = 0x03 ;
+                  else   Data_ByteCount = 0x01 ; //----Jack
+   
+                  if(Data_ByteCount == 0x01)
                   {
-                     //Data_Buff[0] = ~output[0] >> Start_Address ;
+   
+                     if(Start_Address < 0x09)
+                     {
+                        //Data_Buff[0] = ~output[0] >> Start_Address ;
+                        //DataTemp = ~output[1] << (0x08 - Start_Address) ;
+                        //Data_Buff[0] = (~output[0] >> Start_Address) | DataTemp;   //Low Byte
+                         Data_Buff[0] = Input1_8 >> Start_Address ;
+                         //DataTemp = Input9_16 << (0x08 - Start_Address) ;//JJ
+                         //Data_Buff[0] = (Input1_8 >> Start_Address) | DataTemp;   //Low Byte//JJ
+                     }
+                     else if(Start_Address > 0x08 && Start_Address < 0x10)
+                     {
+                        //Data_Buff[0] = ~output[1] >> (Start_Address - 0x08) ;
+                        Data_Buff[0] = Input9_16 >> (Start_Address - 0x08) ;
+                     }
+   
+   
+                     if(No_PointCount == 0x08)
+                     {
+                        Data_Buff[0] = Data_Buff[0] & 0xFF ; //8 Point High Byte
+                     }
+                     else if(No_PointCount == 0x07)
+                     {
+                        Data_Buff[0] =    Data_Buff[0] & 0x7F ; //7 Point High Byte
+                     }
+                     else if(No_PointCount == 0x06)
+                     {
+                        Data_Buff[0] =    Data_Buff[0] & 0x3F ; //6 Point High Byte
+                     }
+                     else if(No_PointCount == 0x05)
+                     {
+                        Data_Buff[0] =    Data_Buff[0] & 0x1F ; //5 Point High Byte
+                     }
+                     else if(No_PointCount == 0x04)
+                     {
+                        Data_Buff[0] =    Data_Buff[0] & 0x0F ; //4 Point High Byte
+                     }
+                     else if(No_PointCount == 0x03)
+                     {
+                        Data_Buff[0] =    Data_Buff[0] & 0x07 ; //3 Point High Byte
+                     }
+                     else if(No_PointCount == 0x02)
+                     {
+                        Data_Buff[0] =    Data_Buff[0] & 0x03 ; //2 Point High Byte
+                     }
+                     else if(No_PointCount == 0x01)
+                     {
+                        Data_Buff[0] =    Data_Buff[0] & 0x01 ; //1 Point High Byte
+                     }
+   
+                     TxD_Buff[0] = Address ;         //Address
+                     TxD_Buff[1] = 0x01 ;         //Function Code
+                     TxD_Buff[2] = Data_ByteCount ;   //Byte Count
+                     TxD_Buff[3] = Data_Buff[0] ;   //Data
+   
+                     CRC(TxD_Buff,4)   ;            //Cal CRC 5 Byte
+   
+                     TxD_Buff[4] = CRC_Hi ;
+                     TxD_Buff[5] = CRC_Lo ;
+   
+                     //TxD_DataLen = 0x06 ;
+                     //rs485_ctrl = 1;
+                     //dmsec(4);
+                     //send = 1;
+                     //TI=1;
+                     output_bit(P485ctrl,1);
+                     restart_wdt();
+                     delay_ms(4);
+                     restart_wdt();
+   
+                     putc(TxD_Buff[0]) ;               //Address
+                     putc(TxD_Buff[1]) ;               //Function Code
+                     putc(TxD_Buff[2]) ;               //Byte Count
+                     putc(TxD_Buff[3]) ;
+                     putc(TxD_Buff[4]) ;
+                     putc(TxD_Buff[5]) ;
+                     //putc(TxD_Buff[6]) ;
+                     //putc(TxD_Buff[7]) ;
+                     //putc(TxD_Buff[8]) ;
+                     //putc(TxD_Buff[9]) ;
+                  
+                     restart_wdt();
+                     delay_ms(3);
+                     restart_wdt();
+                     output_bit(P485ctrl,0);
+                 
+                  }
+                  else if(Data_ByteCount == 0x02)
+                  {
+                     //Data_Buff[1] = ~output[1] >> Start_Address ;
                      //DataTemp = ~output[1] << (0x08 - Start_Address) ;
                      //Data_Buff[0] = (~output[0] >> Start_Address) | DataTemp;   //Low Byte
-                      Data_Buff[0] = Input1_8 >> Start_Address ;
-                      //DataTemp = Input9_16 << (0x08 - Start_Address) ;//JJ
-                      //Data_Buff[0] = (Input1_8 >> Start_Address) | DataTemp;   //Low Byte//JJ
+                     
+                     //Data_Buff[1] = Output9_16 >> Start_Address ;//jj
+                     //DataTemp = Output9_16 << (0x08 - Start_Address) ;//jj
+                     //Data_Buff[0] = (Output1_8 >> Start_Address) | DataTemp;   //Low Byte//jj
+                     Data_Buff[0] = Input1_8 >> Start_Address ;
+                     Data_Buff[1] = Input9_16 ;// >> Start_Address ;
+   
+   
+                     if((No_PointCount - 0x07) == 0x08)
+                     {
+                        Data_Buff[1] = Data_Buff[1] & 0xFF ; //16 Point High Byte
+                     }
+                     else if((No_PointCount - 0x07) == 0x07)
+                     {
+                        Data_Buff[1] =    Data_Buff[1] & 0x7F ; //15 Point High Byte
+                     }
+                     else if((No_PointCount - 0x07) == 0x06)
+                     {
+                        Data_Buff[1] =    Data_Buff[1] & 0x3F ; //14 Point High Byte
+                     }
+                     else if((No_PointCount - 0x07) == 0x05)
+                     {
+                        Data_Buff[1] =    Data_Buff[1] & 0x1F ; //13 Point High Byte
+                     }
+                     else if((No_PointCount - 0x07) == 0x04)
+                     {
+                        Data_Buff[1] =    Data_Buff[1] & 0x0F ; //12 Point High Byte
+                     }
+                     else if((No_PointCount - 0x07) == 0x03)
+                     {
+                        Data_Buff[1] =    Data_Buff[1] & 0x07 ; //11 Point High Byte
+                     }
+                     else if((No_PointCount - 0x07) == 0x02)
+                     {
+                        Data_Buff[1] =    Data_Buff[1] & 0x03 ; //10 Point High Byte
+                     }
+                     else if((No_PointCount - 0x07) == 0x01)
+                     {
+                        Data_Buff[1] =    Data_Buff[1] & 0x01 ; //9 Point High Byte
+                     }
+   
+                     TxD_Buff[0] = Address ;         //Address
+                     TxD_Buff[1] = 0x01 ;         //Function Code
+                     TxD_Buff[2] = Data_ByteCount ;   //Byte Count
+                     TxD_Buff[3] = Data_Buff[0] ;      //first byte Data
+                     TxD_Buff[4] = Data_Buff[1] ;      //second byte Data
+   
+                     CRC(TxD_Buff,5)   ;            //Cal CRC 5 Byte
+   
+                     TxD_Buff[5] = CRC_Hi ;
+                     TxD_Buff[6] = CRC_Lo ;
+   
+                     //TxD_DataLen = 0x07 ;
+                     //rs485_ctrl = 1;
+                     //dmsec(4);
+                     //send = 1;
+                     //TI=1;
+                     output_bit(P485ctrl,1);
+                     restart_wdt();
+                     delay_ms(4);
+                     restart_wdt();
+   
+                     putc(TxD_Buff[0]) ;               //Address
+                     putc(TxD_Buff[1]) ;               //Function Code
+                     putc(TxD_Buff[2]) ;               //Byte Count
+                     putc(TxD_Buff[3]) ;
+                     putc(TxD_Buff[4]) ;
+                     putc(TxD_Buff[5]) ;
+                     putc(TxD_Buff[6]) ;
+                     //putc(TxD_Buff[7]) ;
+                     //putc(TxD_Buff[8]) ;
+                     //putc(TxD_Buff[9]) ;
+   
+                     restart_wdt();
+                     delay_ms(3);
+                     restart_wdt();
+                     output_bit(P485ctrl,0);
+                 
                   }
-                  else if(Start_Address > 0x08 && Start_Address < 0x10)
-                  {
-                     //Data_Buff[0] = ~output[1] >> (Start_Address - 0x08) ;
-                     Data_Buff[0] = Input9_16 >> (Start_Address - 0x08) ;
-                  }
-
-
-                  if(No_PointCount == 0x08)
-                  {
-                     Data_Buff[0] = Data_Buff[0] & 0xFF ; //8 Point High Byte
-                  }
-                  else if(No_PointCount == 0x07)
-                  {
-                     Data_Buff[0] =    Data_Buff[0] & 0x7F ; //7 Point High Byte
-                  }
-                  else if(No_PointCount == 0x06)
-                  {
-                     Data_Buff[0] =    Data_Buff[0] & 0x3F ; //6 Point High Byte
-                  }
-                  else if(No_PointCount == 0x05)
-                  {
-                     Data_Buff[0] =    Data_Buff[0] & 0x1F ; //5 Point High Byte
-                  }
-                  else if(No_PointCount == 0x04)
-                  {
-                     Data_Buff[0] =    Data_Buff[0] & 0x0F ; //4 Point High Byte
-                  }
-                  else if(No_PointCount == 0x03)
-                  {
-                     Data_Buff[0] =    Data_Buff[0] & 0x07 ; //3 Point High Byte
-                  }
-                  else if(No_PointCount == 0x02)
-                  {
-                     Data_Buff[0] =    Data_Buff[0] & 0x03 ; //2 Point High Byte
-                  }
-                  else if(No_PointCount == 0x01)
-                  {
-                     Data_Buff[0] =    Data_Buff[0] & 0x01 ; //1 Point High Byte
-                  }
-
+               }
+               else
+               {
+                  //invalid parameter
                   TxD_Buff[0] = Address ;         //Address
-                  TxD_Buff[1] = 0x01 ;         //Function Code
-                  TxD_Buff[2] = Data_ByteCount ;   //Byte Count
-                  TxD_Buff[3] = Data_Buff[0] ;   //Data
-
-                  CRC(TxD_Buff,4)   ;            //Cal CRC 5 Byte
-
-                  TxD_Buff[4] = CRC_Hi ;
-                  TxD_Buff[5] = CRC_Lo ;
-
-                  //TxD_DataLen = 0x06 ;
+                  TxD_Buff[1] = 0x81 ;         //Function Code
+                  TxD_Buff[2] = 0x02 ;         //illegal data address
+   
+                  CRC(TxD_Buff,3)   ;            //Cal CRC 3 Byte
+   
+                  TxD_Buff[3] = CRC_Hi ;
+                  TxD_Buff[4] = CRC_Lo ;
+   
+                  //TxD_DataLen = 0x05 ;
                   //rs485_ctrl = 1;
+                  //restart_wdt();
                   //dmsec(4);
+                  //restart_wdt();
                   //send = 1;
                   //TI=1;
                   output_bit(P485ctrl,1);
                   restart_wdt();
                   delay_ms(4);
                   restart_wdt();
-
+   
                   putc(TxD_Buff[0]) ;               //Address
                   putc(TxD_Buff[1]) ;               //Function Code
                   putc(TxD_Buff[2]) ;               //Byte Count
                   putc(TxD_Buff[3]) ;
                   putc(TxD_Buff[4]) ;
-                  putc(TxD_Buff[5]) ;
+                 //putc(TxD_Buff[5]) ;
                   //putc(TxD_Buff[6]) ;
                   //putc(TxD_Buff[7]) ;
                   //putc(TxD_Buff[8]) ;
                   //putc(TxD_Buff[9]) ;
-               
+   
                   restart_wdt();
                   delay_ms(3);
                   restart_wdt();
                   output_bit(P485ctrl,0);
-              
-               }
-               else if(Data_ByteCount == 0x02)
-               {
-                  //Data_Buff[1] = ~output[1] >> Start_Address ;
-                  //DataTemp = ~output[1] << (0x08 - Start_Address) ;
-                  //Data_Buff[0] = (~output[0] >> Start_Address) | DataTemp;   //Low Byte
                   
-                  //Data_Buff[1] = Output9_16 >> Start_Address ;//jj
-                  //DataTemp = Output9_16 << (0x08 - Start_Address) ;//jj
-                  //Data_Buff[0] = (Output1_8 >> Start_Address) | DataTemp;   //Low Byte//jj
-                  Data_Buff[0] = Input1_8 >> Start_Address ;
-                  Data_Buff[1] = Input9_16 ;// >> Start_Address ;
-
-
-                  if((No_PointCount - 0x07) == 0x08)
-                  {
-                     Data_Buff[1] = Data_Buff[1] & 0xFF ; //16 Point High Byte
-                  }
-                  else if((No_PointCount - 0x07) == 0x07)
-                  {
-                     Data_Buff[1] =    Data_Buff[1] & 0x7F ; //15 Point High Byte
-                  }
-                  else if((No_PointCount - 0x07) == 0x06)
-                  {
-                     Data_Buff[1] =    Data_Buff[1] & 0x3F ; //14 Point High Byte
-                  }
-                  else if((No_PointCount - 0x07) == 0x05)
-                  {
-                     Data_Buff[1] =    Data_Buff[1] & 0x1F ; //13 Point High Byte
-                  }
-                  else if((No_PointCount - 0x07) == 0x04)
-                  {
-                     Data_Buff[1] =    Data_Buff[1] & 0x0F ; //12 Point High Byte
-                  }
-                  else if((No_PointCount - 0x07) == 0x03)
-                  {
-                     Data_Buff[1] =    Data_Buff[1] & 0x07 ; //11 Point High Byte
-                  }
-                  else if((No_PointCount - 0x07) == 0x02)
-                  {
-                     Data_Buff[1] =    Data_Buff[1] & 0x03 ; //10 Point High Byte
-                  }
-                  else if((No_PointCount - 0x07) == 0x01)
-                  {
-                     Data_Buff[1] =    Data_Buff[1] & 0x01 ; //9 Point High Byte
-                  }
-
-                  TxD_Buff[0] = Address ;         //Address
-                  TxD_Buff[1] = 0x01 ;         //Function Code
-                  TxD_Buff[2] = Data_ByteCount ;   //Byte Count
-                  TxD_Buff[3] = Data_Buff[0] ;      //first byte Data
-                  TxD_Buff[4] = Data_Buff[1] ;      //second byte Data
-
-                  CRC(TxD_Buff,5)   ;            //Cal CRC 5 Byte
-
-                  TxD_Buff[5] = CRC_Hi ;
-                  TxD_Buff[6] = CRC_Lo ;
-
-                  //TxD_DataLen = 0x07 ;
-                  //rs485_ctrl = 1;
-                  //dmsec(4);
-                  //send = 1;
-                  //TI=1;
-                  output_bit(P485ctrl,1);
-                  restart_wdt();
-                  delay_ms(4);
-                  restart_wdt();
-
-                  putc(TxD_Buff[0]) ;               //Address
-                  putc(TxD_Buff[1]) ;               //Function Code
-                  putc(TxD_Buff[2]) ;               //Byte Count
-                  putc(TxD_Buff[3]) ;
-                  putc(TxD_Buff[4]) ;
-                  putc(TxD_Buff[5]) ;
-                  putc(TxD_Buff[6]) ;
-                  //putc(TxD_Buff[7]) ;
-                  //putc(TxD_Buff[8]) ;
-                  //putc(TxD_Buff[9]) ;
-
-                  restart_wdt();
-                  delay_ms(3);
-                  restart_wdt();
-                  output_bit(P485ctrl,0);
-              
                }
             }
-            else
-            {
-               //invalid parameter
-               TxD_Buff[0] = Address ;         //Address
-               TxD_Buff[1] = 0x81 ;         //Function Code
-               TxD_Buff[2] = 0x02 ;         //illegal data address
-
-               CRC(TxD_Buff,3)   ;            //Cal CRC 3 Byte
-
-               TxD_Buff[3] = CRC_Hi ;
-               TxD_Buff[4] = CRC_Lo ;
-
-               //TxD_DataLen = 0x05 ;
-               //rs485_ctrl = 1;
-               //restart_wdt();
-               //dmsec(4);
-               //restart_wdt();
-               //send = 1;
-               //TI=1;
-               output_bit(P485ctrl,1);
-               restart_wdt();
-               delay_ms(4);
-               restart_wdt();
-
-               putc(TxD_Buff[0]) ;               //Address
-               putc(TxD_Buff[1]) ;               //Function Code
-               putc(TxD_Buff[2]) ;               //Byte Count
-               putc(TxD_Buff[3]) ;
-               putc(TxD_Buff[4]) ;
-              //putc(TxD_Buff[5]) ;
-               //putc(TxD_Buff[6]) ;
-               //putc(TxD_Buff[7]) ;
-               //putc(TxD_Buff[8]) ;
-               //putc(TxD_Buff[9]) ;
-
-               restart_wdt();
-               delay_ms(3);
-               restart_wdt();
-               output_bit(P485ctrl,0);
-               
-            }
-         }
-         
- /*           //Read 03
-      if(RxD_Buff[1] == 0x03)///////////// READ COIL /////////////////////
-      {
-            //Do Read Coil
-            Start_Address = RxD_Buff[2] ;
-            Start_Address = (Start_Address << 8) | RxD_Buff[3] ;   //Start Address 16 bit
-            No_PointCount = RxD_Buff[4] ;
-            No_PointCount = (No_PointCount << 8) | RxD_Buff[5] ;   //No. of Point 16 bit
-
-           if(Start_Address < 0x01 && (Start_Address + No_PointCount) < 0x02)  //Valid point 0
-            {
-               if(No_PointCount < 2) Data_ByteCount = 0x02 ;
-               //else if(No_PointCount < 3) Data_ByteCount = 0x02 ;
-               //else if(No_PointCount < 25) Data_ByteCount = 0x03 ;
-               
-               //if(Data_ByteCount == 0x01)
-               //{
-                  Data_Buff[0] = Input1_8 >> Start_Address ;
-                  Data_Buff[1] = Input9_16 ;// >> Start_Address ;
-                  
-
-                  TxD_Buff[0] = Address ;         //Address
-                  TxD_Buff[1] = 0x03 ;         //Function Code
-                  TxD_Buff[2] = Data_ByteCount ;   //Byte Count
-                  TxD_Buff[3] = Data_Buff[1] ;      //first byte Data
-                  TxD_Buff[4] = Data_Buff[0] ;      //second byte Data
-
-                  CRC(TxD_Buff,5)   ;            //Cal CRC 5 Byte
-
-                  TxD_Buff[5] = CRC_Hi ;
-                  TxD_Buff[6] = CRC_Lo ;
-
-                  //TxD_DataLen = 0x07 ;
-                  //rs485_ctrl = 1;
-                  //dmsec(4);
-                  //send = 1;
-                  //TI=1;
-                  output_bit(P485ctrl,1);
-                  restart_wdt();
-                  delay_ms(4);
-                  restart_wdt();
-
-                  putc(TxD_Buff[0]) ;               //Address
-                  putc(TxD_Buff[1]) ;               //Function Code
-                  putc(TxD_Buff[2]) ;               //Byte Count
-                  putc(TxD_Buff[3]) ;
-                  putc(TxD_Buff[4]) ;
-                  putc(TxD_Buff[5]) ;
-                  putc(TxD_Buff[6]) ;
-                  //putc(TxD_Buff[7]) ;
-                  //putc(TxD_Buff[8]) ;
-                  //putc(TxD_Buff[9]) ;
-
-                  restart_wdt();
-                  delay_ms(3);
-                  restart_wdt();
-                  output_bit(P485ctrl,0);
-              
-            }
-            else
-            {
-               //invalid parameter
-               TxD_Buff[0] = Address ;         //Address
-               TxD_Buff[1] = 0x81 ;         //Function Code
-               TxD_Buff[2] = 0x02 ;         //illegal data address
-
-               CRC(TxD_Buff,3)   ;            //Cal CRC 3 Byte
-
-               TxD_Buff[3] = CRC_Hi ;
-               TxD_Buff[4] = CRC_Lo ;
-
-               //TxD_DataLen = 0x05 ;
-               //rs485_ctrl = 1;
-               //restart_wdt();
-               //dmsec(4);
-               //restart_wdt();
-               //send = 1;
-               //TI=1;
-               output_bit(P485ctrl,1);
-               restart_wdt();
-               delay_ms(4);
-               restart_wdt();
-
-               putc(TxD_Buff[0]) ;               //Address
-               putc(TxD_Buff[1]) ;               //Function Code
-               putc(TxD_Buff[2]) ;               //Byte Count
-               putc(TxD_Buff[3]) ;
-               putc(TxD_Buff[4]) ;
-              //putc(TxD_Buff[5]) ;
-               //putc(TxD_Buff[6]) ;
-               //putc(TxD_Buff[7]) ;
-               //putc(TxD_Buff[8]) ;
-               //putc(TxD_Buff[9]) ;
-
-               restart_wdt();
-               delay_ms(3);
-               restart_wdt();
-               output_bit(P485ctrl,0);
-               
-            }
-         }
-         
-*/
    
-                  /*-------------jack----*/
- 
-      if(RxD_Buff[1] == 0x07)///////////// READ COIL (esp code)////////////
-      {
-         alarmtosend();
-         
-         disable_interrupts(INT_TIMER2);
-         //----------------------------------jj----------------------------//
-         
-            Data_Buff[0] = Input1_8_Send ; //>> Start_Address ;
-            Data_Buff[1] = Input9_16_Send ;// >> Start_Address ;
-            Data_Buff[2] = Input17_24_Send ;// >> Start_Address ;
-            Data_Buff[3] = Input25_32_Send ;
-            Data_Buff[4] = Input33_40_Send ;
-            Data_Buff[5] = Input41_48_Send ;
-            Data_Buff[6] = Input49_56_Send ;
-            Data_Buff[7] = Input57_64_Send ;
-           
-            Data_Buff[8] = Ack1_8_Send ;
-            Data_Buff[9] = Ack9_16_Send ;
-            Data_Buff[10] = Ack17_24_Send ;
-            Data_Buff[11] = Ack25_32_Send ;
-            Data_Buff[12] = Ack33_40_Send ;
-            Data_Buff[13] = Ack41_48_Send ;
-            Data_Buff[14] = Ack49_56_Send ;
-            Data_Buff[15] = Ack57_64_Send ;
-   
-            
-            
-            TxD_Buff[0] = Address ;         //Address
-            TxD_Buff[1] = 0x07 ;         //Function Code
-            TxD_Buff[2] = Data_ByteCount=0x10;   //Byte Count
-            TxD_Buff[3] = Data_Buff[0] ;      //first byte Data
-            TxD_Buff[4] = Data_Buff[1] ;      //second byte Data
-            TxD_Buff[5] = Data_Buff[2] ;  
-            TxD_Buff[6] = Data_Buff[3] ;
-            TxD_Buff[7] = Data_Buff[4] ;
-            TxD_Buff[8] = Data_Buff[5] ;
-            TxD_Buff[9] = Data_Buff[6] ;
-            TxD_Buff[10] = Data_Buff[7] ;
-              
-           TxD_Buff[11] = Data_Buff[8] ; //Ack1-8
-           TxD_Buff[12] = Data_Buff[9] ;
-           TxD_Buff[13] = Data_Buff[10] ;
-           TxD_Buff[14] = Data_Buff[11] ;
-           TxD_Buff[15] = Data_Buff[12] ;
-           TxD_Buff[16] = Data_Buff[13] ;
-           TxD_Buff[17] = Data_Buff[14] ;
-           TxD_Buff[18] = Data_Buff[15] ; //Ack57-64
-
-           CRC(TxD_Buff,19);            //Cal CRC 5 Byte
-
-          TxD_Buff[19] = CRC_Hi ;
-          TxD_Buff[20] = CRC_Lo ;
-
-        
-         output_bit(P485ctrl,1);
-         restart_wdt();
-         delay_ms(4);
-         restart_wdt();
-         
-         
-         
-         putc(TxD_Buff[0]) ;               //Address
-         putc(TxD_Buff[1]) ;               //Function Code
-         putc(TxD_Buff[2]) ;               //Byte Count
-         putc(TxD_Buff[3]) ;
-         putc(TxD_Buff[4]) ;
-         putc(TxD_Buff[5]) ;
-         putc(TxD_Buff[6]) ;
-         putc(TxD_Buff[7]) ;
-         putc(TxD_Buff[8]) ;
-         putc(TxD_Buff[9]) ;
-         putc(TxD_Buff[10]) ;
-         putc(TxD_Buff[11]) ;
-         putc(TxD_Buff[12]) ;
-         putc(TxD_Buff[13]) ;
-         putc(TxD_Buff[14]) ;
-         putc(TxD_Buff[15]) ;
-         putc(TxD_Buff[16]) ;
-         putc(TxD_Buff[17]) ;
-         putc(TxD_Buff[18]) ;
-         putc(TxD_Buff[19]) ;
-         putc(TxD_Buff[20]) ;
-
-         restart_wdt();
-         delay_ms(3);
-         restart_wdt();
-         output_bit(P485ctrl,0);
-           
-        
-         /////////////////////////////////////////
-         
-        enable_interrupts(INT_TIMER2); 
-     
-       }
-      /////////////////////////////////////////////////////////////////
-
-         /*-------------jack----
-         //else if(RxD_Buff[1] == 0x02)/////////// READ INPUT /////////////////////
-         if(RxD_Buff[1] == 0x02)///////////// READ INPUT /////////////////////
+    
+         if(RxD_Buff[1] == 0x07)///////////// READ COIL (esp code)////////////
          {
-            //Do Read Input
-            Start_Address = RxD_Buff[2] ;
-            Start_Address = (Start_Address << 8) | RxD_Buff[3] ;   //Start Address 16 bit
-            No_PointCount = RxD_Buff[4] ;
-            No_PointCount = (No_PointCount << 8) | RxD_Buff[5] ;      //No. of Point 16 bit
-
-            //if(Start_Address < 0x10 && (Start_Address + No_PointCount) < 0x11)  //Valid point 0-15
-            if(Start_Address == 0x00 && No_PointCount == 0x28)  //Valid point 0-40
-            {
+            alarmtosend();
             
-               //\* //----JACK Comment --------//
-               if(No_PointCount < 9) Data_ByteCount = 0x01 ;
-               else if(No_PointCount < 17) Data_ByteCount = 0x02 ;
-               else if(No_PointCount < 25) Data_ByteCount = 0x03 ;
-
-               if(Data_ByteCount == 0x01)
-               {
-                  if(Start_Address < 0x09)
-                  {
-                     Data_Buff[0] = Input1_8 >> Start_Address ;
-                     DataTemp = Input9_16 << (0x08 - Start_Address) ;
-                     Data_Buff[0] = (Input1_8 >> Start_Address) | DataTemp;   //Low Byte
-                  }
-                  else if(Start_Address > 0x08 && Start_Address < 0x10)
-                  {
-                     Data_Buff[0] = Input9_16 >> (Start_Address - 0x08) ;
-                  }
-
-
-                  if(No_PointCount == 0x08)
-                  {
-                     Data_Buff[0] = Data_Buff[0] & 0xFF ; //8 Point High Byte
-                  }
-                  else if(No_PointCount == 0x07)
-                  {
-                     Data_Buff[0] =    Data_Buff[0] & 0x7F ; //7 Point High Byte
-                  }
-                  else if(No_PointCount == 0x06)
-                  {
-                     Data_Buff[0] =    Data_Buff[0] & 0x3F ; //6 Point High Byte
-                  }
-                  else if(No_PointCount == 0x05)
-                  {
-                     Data_Buff[0] =    Data_Buff[0] & 0x1F ; //5 Point High Byte
-                  }
-                  else if(No_PointCount == 0x04)
-                  {
-                     Data_Buff[0] =    Data_Buff[0] & 0x0F ; //4 Point High Byte
-                  }
-                  else if(No_PointCount == 0x03)
-                  {
-                     Data_Buff[0] =    Data_Buff[0] & 0x07 ; //3 Point High Byte
-                  }
-                  else if(No_PointCount == 0x02)
-                  {
-                     Data_Buff[0] =    Data_Buff[0] & 0x03 ; //2 Point High Byte
-                  }
-                  else if(No_PointCount == 0x01)
-                  {
-                     Data_Buff[0] =    Data_Buff[0] & 0x01 ; //1 Point High Byte
-                  }
-
-                  TxD_Buff[0] = Address ;         //Address
-                  TxD_Buff[1] = 0x02 ;         //Function Code
-                  TxD_Buff[2] = Data_ByteCount ;   //Byte Count
-                  TxD_Buff[3] = Data_Buff[0] ;   //Data
-
-                  CRC(TxD_Buff,4)   ;            //Cal CRC 4 Byte
-
-                  TxD_Buff[4] = CRC_Hi ;
-                  TxD_Buff[5] = CRC_Lo ;
-
-                  TxD_DataLen = 0x06 ;
-                  //rs485_ctrl = 1;
-                  //dmsec(4);
-                  //send = 1;
-                  //TI=1;
-        //*\///----JACK Comment --------//
-
-                  TxD_Buff[0] = Address ;         //Address
-                  TxD_Buff[1] = 0x02 ;         //Function Code
-                  TxD_Buff[2] = 0x05 ;   //Byte Count
-                  TxD_Buff[3] = Input1_8 ;   //Data
-                  TxD_Buff[4] = Input9_16 ;   //Data
-                  TxD_Buff[5] = Input17_24 ;   //Data
-                  TxD_Buff[6] = Input25_32 ;   //Data
-                  TxD_Buff[7] = Input33_40 ;   //Data
-
-                  CRC(TxD_Buff,8);            //Cal CRC 4 Byte
-
-                  TxD_Buff[8] = CRC_Hi ;
-                  TxD_Buff[9] = CRC_Lo ;
-
-                  output_bit(P485ctrl,1);
-                  restart_wdt();
-                  delay_ms(4);
-                  restart_wdt();
-
-                  putc(TxD_Buff[0]) ;               //Address
-                  putc(TxD_Buff[1]) ;               //Function Code
-                  putc(TxD_Buff[2]) ;               //Byte Count
-                  putc(TxD_Buff[3]) ;
-                  putc(TxD_Buff[4]) ;
-                  putc(TxD_Buff[5]) ;
-                  putc(TxD_Buff[6]) ;
-                  putc(TxD_Buff[7]) ;
-                  putc(TxD_Buff[8]) ;
-                  putc(TxD_Buff[9]) ;
-
-                  delay_ms(3);
-                  output_bit(P485ctrl,0);
-
-               /*}
-               else if(Data_ByteCount == 0x02)
-               {
-                  Data_Buff[1] = ~input[1] >> Start_Address ;
-                  DataTemp = ~input[1] << (0x08 - Start_Address) ;
-                  Data_Buff[0] = (~input[0] >> Start_Address) | DataTemp;   //Low Byte
-
-                  if((No_PointCount - 0x08) == 0x08)
-                  {
-                     Data_Buff[1] = Data_Buff[1] & 0xFF ; //16 Point High Byte
-                  }
-                  else if((No_PointCount - 0x08) == 0x07)
-                  {
-                     Data_Buff[1] =    Data_Buff[1] & 0x7F ; //15 Point High Byte
-                  }
-                  else if((No_PointCount - 0x08) == 0x06)
-                  {
-                     Data_Buff[1] =    Data_Buff[1] & 0x3F ; //14 Point High Byte
-                  }
-                  else if((No_PointCount - 0x08) == 0x05)
-                  {
-                     Data_Buff[1] =    Data_Buff[1] & 0x1F ; //13 Point High Byte
-                  }
-                  else if((No_PointCount - 0x08) == 0x04)
-                  {
-                     Data_Buff[1] =    Data_Buff[1] & 0x0F ; //12 Point High Byte
-                  }
-                  else if((No_PointCount - 0x08) == 0x03)
-                  {
-                     Data_Buff[1] =    Data_Buff[1] & 0x07 ; //11 Point High Byte
-                  }
-                  else if((No_PointCount - 0x08) == 0x02)
-                  {
-                     Data_Buff[1] =    Data_Buff[1] & 0x03 ; //10 Point High Byte
-                  }
-                  else if((No_PointCount - 0x08) == 0x01)
-                  {
-                     Data_Buff[1] =    Data_Buff[1] & 0x01 ; //9 Point High Byte
-                  }
-
-                  TxD_Buff[0] = Address ;         //Address
-                  TxD_Buff[1] = 0x02 ;         //Function Code
-                  TxD_Buff[2] = Data_ByteCount ;   //Byte Count
-                  TxD_Buff[3] = Data_Buff[0] ;      //first byte Data
-                  TxD_Buff[4] = Data_Buff[1] ;      //second byte Data
-
-                  CRC(TxD_Buff,5)   ;            //Cal CRC 5 Byte
-
-                  TxD_Buff[5] = CRC_Hi ;
-                  TxD_Buff[6] = CRC_Lo ;
-
-                  TxD_DataLen = 0x07 ;
-                  rs485_ctrl = 1;
-                  dmsec(4);
-                  send = 1;
-                  TI=1;
-               }//
-            }
-            else
-            {
-               //Invalid function
-               TxD_Buff[0] = Address ;         //Address
-               TxD_Buff[1] = 0x81 ;         //Function Code
-               TxD_Buff[2] = 0x01 ;         //illegal function
-
-               CRC(TxD_Buff,3)   ;            //Cal CRC 3 Byte
-
-               TxD_Buff[3] = CRC_Hi ;
-               TxD_Buff[4] = CRC_Lo ;
-
-               output_bit(P485ctrl,1);
-               delay_ms(10);
-
-               putc(Txd_Buff[0]);
-               putc(Txd_Buff[1]);
-               putc(Txd_Buff[2]);
-               putc(Txd_Buff[3]);
-               putc(Txd_Buff[4]);
-
-               delay_ms(3);
-               output_bit(P485ctrl,0);
-            }
-
-         }
-      }
+            disable_interrupts(INT_TIMER2);
+            //----------------------------------jj----------------------------//
+            
+               Data_Buff[0] = Input1_8_Send ; //>> Start_Address ;
+               Data_Buff[1] = Input9_16_Send ;// >> Start_Address ;
+               Data_Buff[2] = Input17_24_Send ;// >> Start_Address ;
+               Data_Buff[3] = Input25_32_Send ;
+               Data_Buff[4] = Input33_40_Send ;
+               Data_Buff[5] = Input41_48_Send ;
+               Data_Buff[6] = Input49_56_Send ;
+               Data_Buff[7] = Input57_64_Send ;
+              
+               Data_Buff[8] = Ack1_8_Send ;
+               Data_Buff[9] = Ack9_16_Send ;
+               Data_Buff[10] = Ack17_24_Send ;
+               Data_Buff[11] = Ack25_32_Send ;
+               Data_Buff[12] = Ack33_40_Send ;
+               Data_Buff[13] = Ack41_48_Send ;
+               Data_Buff[14] = Ack49_56_Send ;
+               Data_Buff[15] = Ack57_64_Send ;
       
-      */
-       else if(RxD_Buff[1] == 0x05)///////////// FORCE COIL /////////////////////
-       {
-            //Do Force Coil
-            Start_Address = RxD_Buff[2] ;
-            Start_Address = (Start_Address << 8) | RxD_Buff[3] ;   //Coil Address 16 bit
-            No_PointCount = RxD_Buff[4] ;
-            No_PointCount = (No_PointCount << 8) | RxD_Buff[5] ;   //Force Data 16 bit FF00 = ON, 00FF = OFF
-
-            if(Start_Address == 0x00)   ////// Acknowlegde //////
-            {
-               if(No_PointCount == 0xFF00)   //ON
-               {
-                  //Modbus_ACK = 1 ;
-                  AutoAckFlag = 1;
-
-                  TxD_Buff[0] = Address ;         //Address
-                  TxD_Buff[1] = 0x05 ;         //Function Code
-                  TxD_Buff[2] = RxD_Buff[2] ;      //Coil Address Hi
-                  TxD_Buff[3] = RxD_Buff[3] ;      //Coil Address Lo
-                  TxD_Buff[4] = RxD_Buff[4] ;      //Force Data Hi
-                  TxD_Buff[5] = RxD_Buff[5] ;      //Force Data Lo
-
-                  CRC(TxD_Buff,6);            //Cal CRC 6 Byte
-
-                  TxD_Buff[6] = CRC_Hi ;
-                  TxD_Buff[7] = CRC_Lo ;
-
-                  //TxD_DataLen = 0x08 ;
-                  //rs485_ctrl = 1;
-                  //dmsec(4);
-                  //send = 1;
-                  //TI=1;
-              output_bit(P485ctrl,1);
-                  restart_wdt();
-                  delay_ms(4);
-                  restart_wdt();
-
-                  putc(TxD_Buff[0]) ;               //Address
-                  putc(TxD_Buff[1]) ;               //Function Code
-                  putc(TxD_Buff[2]) ;               //Byte Count
-                  putc(TxD_Buff[3]) ;
-                  putc(TxD_Buff[4]) ;
-                  putc(TxD_Buff[5]) ;
-                  putc(TxD_Buff[6]) ;
-                  putc(TxD_Buff[7]) ;
-                  //putc(TxD_Buff[8]) ;
-                  //putc(TxD_Buff[9]) ;
-
-                  restart_wdt();
-                  delay_ms(3);
-                  restart_wdt();
-                  output_bit(P485ctrl,0);
-              
-               }
-            }
-            else if(Start_Address == 0x01)   ///// Reset //////
-            {
-               if(No_PointCount == 0xFF00)   //ON
-               {
-                  //Modbus_RET = 1 ;
-                  AutoResetFlag = 1;
-                  
-                  TxD_Buff[0] = Address ;         //Address
-                  TxD_Buff[1] = 0x05 ;         //Function Code
-                  TxD_Buff[2] = RxD_Buff[2] ;      //Coil Address Hi
-                  TxD_Buff[3] = RxD_Buff[3] ;      //Coil Address Lo
-                  TxD_Buff[4] = RxD_Buff[4] ;      //Force Data Hi
-                  TxD_Buff[5] = RxD_Buff[5] ;      //Force Data Lo
-
-                  CRC(TxD_Buff,6)   ;            //Cal CRC 6 Byte
-
-                  TxD_Buff[6] = CRC_Hi ;
-                  TxD_Buff[7] = CRC_Lo ;
-
-                  //TxD_DataLen = 0x08 ;
-                  //rs485_ctrl = 1;
-                 //dmsec(4);
-                  //send = 1;
-                  //TI=1;
-                  output_bit(P485ctrl,1);
-                  restart_wdt();
-                  delay_ms(4);
-                  restart_wdt();
-
-                  putc(TxD_Buff[0]) ;               //Address
-                  putc(TxD_Buff[1]) ;               //Function Code
-                  putc(TxD_Buff[2]) ;               //Byte Count
-                  putc(TxD_Buff[3]) ;
-                  putc(TxD_Buff[4]) ;
-                  putc(TxD_Buff[5]) ;
-                  putc(TxD_Buff[6]) ;
-                  putc(TxD_Buff[7]) ;
-                  //putc(TxD_Buff[8]) ;
-                  //putc(TxD_Buff[9]) ;
-
-                  restart_wdt();
-                  delay_ms(3);
-                  restart_wdt();
-                  output_bit(P485ctrl,0);
-              
-               }
-            }
-            else if(Start_Address == 0x02)   ///// Test //////
-            {
-               if(No_PointCount == 0xFF00)   //ON
-               {
-                  //Modbus_Lamp_Test = 1 ;
-                  AutoTestFlag = 1;
-
-                  TxD_Buff[0] = Address ;         //Address
-                  TxD_Buff[1] = 0x05 ;         //Function Code
-                  TxD_Buff[2] = RxD_Buff[2] ;      //Coil Address Hi
-                  TxD_Buff[3] = RxD_Buff[3] ;      //Coil Address Lo
-                  TxD_Buff[4] = RxD_Buff[4] ;      //Force Data Hi
-                  TxD_Buff[5] = RxD_Buff[5] ;      //Force Data Lo
-
-                  CRC(TxD_Buff,6)   ;            //Cal CRC 6 Byte
-
-                  TxD_Buff[6] = CRC_Hi ;
-                  TxD_Buff[7] = CRC_Lo ;
-
-                 //TxD_DataLen = 0x08 ;
-                 //rs485_ctrl = 1;
-                 //dmsec(4);
-                 //send = 1;
-                 //TI=1;
-                  output_bit(P485ctrl,1);
-                  restart_wdt();
-                  delay_ms(4);
-                  restart_wdt();
-
-                  putc(TxD_Buff[0]) ;               //Address
-                  putc(TxD_Buff[1]) ;               //Function Code
-                  putc(TxD_Buff[2]) ;               //Byte Count
-                  putc(TxD_Buff[3]) ;
-                  putc(TxD_Buff[4]) ;
-                  putc(TxD_Buff[5]) ;
-                  putc(TxD_Buff[6]) ;
-                  putc(TxD_Buff[7]) ;
-                  //putc(TxD_Buff[8]) ;
-                  //putc(TxD_Buff[9]) ;
-
-                  restart_wdt();
-                  delay_ms(3);
-                  restart_wdt();
-                  output_bit(P485ctrl,0);
-             
-               }
-               else if(No_PointCount == 0x00)   //OFF
-               {
-                  //Modbus_Lamp_Test = 0 ;
-                  AutoTestFlag = 0;
-                  Read_input();
-                  AutoAckFlag = 1;
-                  check_ack();
-                  AutoResetFlag = 1;
-                  check_reset();
-
-                  TxD_Buff[0] = Address ;         //Address
-                  TxD_Buff[1] = 0x05 ;         //Function Code
-                  TxD_Buff[2] = RxD_Buff[2] ;      //Coil Address Hi
-                  TxD_Buff[3] = RxD_Buff[3] ;      //Coil Address Lo
-                  TxD_Buff[4] = RxD_Buff[4] ;      //Force Data Hi
-                  TxD_Buff[5] = RxD_Buff[5] ;      //Force Data Lo
-
-                  CRC(TxD_Buff,6)   ;            //Cal CRC 6 Byte
-
-                  TxD_Buff[6] = CRC_Hi ;
-                  TxD_Buff[7] = CRC_Lo ;
-
-                  //TxD_DataLen = 0x08 ;
-                  //rs485_ctrl = 1;
-                  //dmsec(4);
-                  //send = 1;
-                  //TI=1;
-                  output_bit(P485ctrl,1);
-                  restart_wdt();
-                  delay_ms(4);
-                  restart_wdt();
-
-                  putc(TxD_Buff[0]) ;               //Address
-                  putc(TxD_Buff[1]) ;               //Function Code
-                  putc(TxD_Buff[2]) ;               //Byte Count
-                  putc(TxD_Buff[3]) ;
-                  putc(TxD_Buff[4]) ;
-                  putc(TxD_Buff[5]) ;
-                  putc(TxD_Buff[6]) ;
-                  putc(TxD_Buff[7]) ;
-                  //putc(TxD_Buff[8]) ;
-                  //putc(TxD_Buff[9]) ;
-
-                  restart_wdt();
-                  delay_ms(3);
-                  restart_wdt();
-                  output_bit(P485ctrl,0);
-                  
-               }
-            }
-            else if(Start_Address == 0x03)   ///// Function Test //////
-            {
-               if(No_PointCount == 0xFF00)   //ON
-               {
-                  //Modbus_Lamp_Test = 1 ;
-                  Test_fault = 1 ;
-
-                  TxD_Buff[0] = Address ;         //Address
-                  TxD_Buff[1] = 0x05 ;         //Function Code
-                  TxD_Buff[2] = RxD_Buff[2] ;      //Coil Address Hi
-                  TxD_Buff[3] = RxD_Buff[3] ;      //Coil Address Lo
-                  TxD_Buff[4] = RxD_Buff[4] ;      //Force Data Hi
-                  TxD_Buff[5] = RxD_Buff[5] ;      //Force Data Lo
-
-                  CRC(TxD_Buff,6)   ;            //Cal CRC 6 Byte
-
-                  TxD_Buff[6] = CRC_Hi ;
-                  TxD_Buff[7] = CRC_Lo ;
-
-                  output_bit(P485ctrl,1);
-                  restart_wdt();
-                  delay_ms(4);
-                  restart_wdt();
-
-                  putc(TxD_Buff[0]) ;               //Address
-                  putc(TxD_Buff[1]) ;               //Function Code
-                  putc(TxD_Buff[2]) ;               //Byte Count
-                  putc(TxD_Buff[3]) ;
-                  putc(TxD_Buff[4]) ;
-                  putc(TxD_Buff[5]) ;
-                  putc(TxD_Buff[6]) ;
-                  putc(TxD_Buff[7]) ;
-                  //putc(TxD_Buff[8]) ;
-                  //putc(TxD_Buff[9]) ;
-
-                  restart_wdt();
-                  delay_ms(10);
-                  restart_wdt();
-                  output_bit(P485ctrl,0);
-               }
-               else if(No_PointCount == 0x00)   //OFF
-               {
-                  //Modbus_Lamp_Test = 0 ;
-                  Test_fault = 0;
-                  Read_input();
-                  AutoAckFlag = 1;
-                  check_ack();
-                  AutoResetFlag = 1;
-                  check_reset();
-
-                  TxD_Buff[0] = Address ;         //Address
-                  TxD_Buff[1] = 0x05 ;         //Function Code
-                  TxD_Buff[2] = RxD_Buff[2] ;      //Coil Address Hi
-                  TxD_Buff[3] = RxD_Buff[3] ;      //Coil Address Lo
-                  TxD_Buff[4] = RxD_Buff[4] ;      //Force Data Hi
-                  TxD_Buff[5] = RxD_Buff[5] ;      //Force Data Lo
-
-                  CRC(TxD_Buff,6)   ;            //Cal CRC 6 Byte
-
-                  TxD_Buff[6] = CRC_Hi ;
-                  TxD_Buff[7] = CRC_Lo ;
-
-                  //TxD_DataLen = 0x08 ;
-                  //rs485_ctrl = 1;
-                  //dmsec(4);
-                  //send = 1;
-                  //TI=1;
-                  output_bit(P485ctrl,1);
-                  restart_wdt();
-                  delay_ms(4);
-                  restart_wdt();
-
-                  putc(TxD_Buff[0]) ;               //Address
-                  putc(TxD_Buff[1]) ;               //Function Code
-                  putc(TxD_Buff[2]) ;               //Byte Count
-                  putc(TxD_Buff[3]) ;
-                  putc(TxD_Buff[4]) ;
-                  putc(TxD_Buff[5]) ;
-                  putc(TxD_Buff[6]) ;
-                  putc(TxD_Buff[7]) ;
-                  //putc(TxD_Buff[8]) ;
-                  //putc(TxD_Buff[9]) ;
-
-                  restart_wdt();
-                  delay_ms(3);
-                  restart_wdt();
-                  output_bit(P485ctrl,0);
-                  
-               }
-            }
-            else if(Start_Address == 0x64)   ///// Change Modbus Addr //////
-            {
-               Address = No_PointCount;
-               write_eeprom(0x1D,Address);   //Communication Address
+               
                
                TxD_Buff[0] = Address ;         //Address
-               TxD_Buff[1] = 0x05 ;         //Function Code
-               TxD_Buff[2] = RxD_Buff[2] ;      //Coil Address Hi
-               TxD_Buff[3] = RxD_Buff[3] ;      //Coil Address Lo
-               TxD_Buff[4] = RxD_Buff[4] ;      //Force Data Hi
-               TxD_Buff[5] = RxD_Buff[5] ;      //Force Data Lo
-
-               CRC(TxD_Buff,6)   ;            //Cal CRC 6 Byte
-
-               TxD_Buff[6] = CRC_Hi ;
-               TxD_Buff[7] = CRC_Lo ;
-
-               //TxD_DataLen = 0x08 ;
-               //rs485_ctrl = 1;
-               //dmsec(4);
-               //send = 1;
-               //TI=1;
-               output_bit(P485ctrl,1);
-               restart_wdt();
-               delay_ms(4);
-               restart_wdt();
-
-               putc(TxD_Buff[0]) ;               //Address
-               putc(TxD_Buff[1]) ;               //Function Code
-               putc(TxD_Buff[2]) ;               //Byte Count
-               putc(TxD_Buff[3]) ;
-               putc(TxD_Buff[4]) ;
-               putc(TxD_Buff[5]) ;
-               putc(TxD_Buff[6]) ;
-               putc(TxD_Buff[7]) ;
-               //putc(TxD_Buff[8]) ;
-               //putc(TxD_Buff[9]) ;
-
-               restart_wdt();
-               delay_ms(3);
-               restart_wdt();
-               output_bit(P485ctrl,0);
-
-
-               //save_addr();
-            }
-         }
-         //--------------------------------------------------//
-         /*
-         else if(RxD_Buff[1] == 0x20)///////////// READ SETTING /////////////////////
-         {
-            TxD_Buff[0] = Address ;         //Address
-            TxD_Buff[1] = 0x20 ;            //function code
-            TxD_Buff[2] = 0x1C ;            //16 Byte//Data Byte count
-            TxD_Buff[3] = InputType1_8 ;
-            TxD_Buff[4] = InputType9_16 ;
-            TxD_Buff[5] = InputType17_24 ;
-            
-            TxD_Buff[6] = FaultType1_8 ;
-            TxD_Buff[7] = FaultType9_16 ;
-            TxD_Buff[8] = FaultType17_24 ;
-            
-            TxD_Buff[9] = OutputType1_8 ;
-            TxD_Buff[10] = OutputType9_16 ;
-            TxD_Buff[11] = OutputType17_24 ;
-            
-            TxD_Buff[12] = OutputBoth1_8 ;
-            TxD_Buff[13] = OutputBoth9_16 ;
-            TxD_Buff[14] = OutputBoth17_24 ;
+               TxD_Buff[1] = 0x07 ;         //Function Code
+               TxD_Buff[2] = Data_ByteCount=0x10;   //Byte Count
+               TxD_Buff[3] = Data_Buff[0] ;      //first byte Data
+               TxD_Buff[4] = Data_Buff[1] ;      //second byte Data
+               TxD_Buff[5] = Data_Buff[2] ;  
+               TxD_Buff[6] = Data_Buff[3] ;
+               TxD_Buff[7] = Data_Buff[4] ;
+               TxD_Buff[8] = Data_Buff[5] ;
+               TxD_Buff[9] = Data_Buff[6] ;
+               TxD_Buff[10] = Data_Buff[7] ;
+                 
+              TxD_Buff[11] = Data_Buff[8] ; //Ack1-8
+              TxD_Buff[12] = Data_Buff[9] ;
+              TxD_Buff[13] = Data_Buff[10] ;
+              TxD_Buff[14] = Data_Buff[11] ;
+              TxD_Buff[15] = Data_Buff[12] ;
+              TxD_Buff[16] = Data_Buff[13] ;
+              TxD_Buff[17] = Data_Buff[14] ;
+              TxD_Buff[18] = Data_Buff[15] ; //Ack57-64
+   
+              CRC(TxD_Buff,19);            //Cal CRC 5 Byte
+   
+             TxD_Buff[19] = CRC_Hi ;
+             TxD_Buff[20] = CRC_Lo ;
+   
            
-            TxD_Buff[15] = Alarm_Indicator1_8 ;
-            TxD_Buff[16] = Alarm_Indicator9_16 ;
-            TxD_Buff[17] = Alarm_Indicator17_24 ;
-           
-            TxD_Buff[18] = Red1_8;
-            TxD_Buff[19] = Red9_10;
-            TxD_Buff[20] = Red11_18;
-            TxD_Buff[21] = Red19_20;
-            TxD_Buff[22] = Green1_8;
-            TxD_Buff[23] = Green9_10;
-            TxD_Buff[24] = Green11_18;
-            TxD_Buff[25] = Green19_20;
-         
-         
-            TxD_Buff[26] = AutoAck ;
-            TxD_Buff[27] = AutoAckTime ;
-            TxD_Buff[28] = FlashingRate ;
-            TxD_Buff[29] = NoOfPoint ;
-            TxD_Buff[30] = FaultDelayTime ;
-            TxD_Buff[31] = Address ;
-
-
-            CRC(TxD_Buff,32)   ; //Cal CRC 49 byte
-
-            TxD_Buff[32] = CRC_Hi ;
-            TxD_Buff[33] = CRC_Lo ;
-
-            output_bit(P485ctrl,1);
-            delay_ms(10);
-
-            putc(Txd_Buff[0]);
-            putc(Txd_Buff[1]);
-            putc(Txd_Buff[2]);
-            putc(Txd_Buff[3]);
-            putc(Txd_Buff[4]);
-            putc(Txd_Buff[5]);
-            putc(Txd_Buff[6]);
-            putc(Txd_Buff[7]);
-            putc(Txd_Buff[8]);
-            putc(Txd_Buff[9]);
-            putc(Txd_Buff[10]);
-            putc(Txd_Buff[11]);
-            putc(Txd_Buff[12]);
-            putc(Txd_Buff[13]);
-            putc(Txd_Buff[14]);
-            putc(Txd_Buff[15]);
-            putc(Txd_Buff[16]);
-            putc(Txd_Buff[17]);
-            putc(Txd_Buff[18]);
-            putc(Txd_Buff[19]);
-            putc(Txd_Buff[20]);
-            putc(Txd_Buff[21]);
-            putc(Txd_Buff[22]);
-            putc(Txd_Buff[23]);
-            putc(Txd_Buff[24]);
-            putc(Txd_Buff[25]);
-            putc(Txd_Buff[26]);
-            putc(Txd_Buff[27]);
-            putc(Txd_Buff[28]);
-            putc(Txd_Buff[29]);
-            putc(Txd_Buff[30]);
-            putc(Txd_Buff[31]);
-            putc(Txd_Buff[32]);
-            putc(Txd_Buff[33]);
-          
-
-
-            delay_ms(3);
-            output_bit(P485ctrl,0);
-         }
-         */
-         else if(RxD_Buff[1] == 0x21)///////////// WRITE SETTING /////////////////////
-         {
-
-            write_eeprom(0x00,0x0F);
-
-            write_eeprom(0x01,RxD_Buff[3]);   //Input Type
-            write_eeprom(0x02,RxD_Buff[4]);
-            write_eeprom(0x03,RxD_Buff[5]);
-           // write_eeprom(0x04,RxD_Buff[6]);
-           // write_eeprom(0x05,RxD_Buff[7]);
-           // write_eeprom(0x06,RxD_Buff[8]);
-           // write_eeprom(0x07,RxD_Buff[9]);
-           // write_eeprom(0x08,RxD_Buff[10]);
-
-            write_eeprom(0x04,RxD_Buff[6]);   //Fault Type
-            write_eeprom(0x05,RxD_Buff[7]);
-            write_eeprom(0x06,RxD_Buff[8]);
-            //write_eeprom(0x0C,RxD_Buff[14]);
-           // write_eeprom(0x0D,RxD_Buff[15]);
-            //write_eeprom(0x0E,RxD_Buff[16]);
-           // write_eeprom(0x0F,RxD_Buff[17]);
-           // write_eeprom(0x10,RxD_Buff[18]);
-
-            write_eeprom(0x07,RxD_Buff[9]);   //Output Type
-            write_eeprom(0x08,RxD_Buff[10]);
-            write_eeprom(0x09,RxD_Buff[11]);
-           // write_eeprom(0x14,RxD_Buff[22]);
-           // write_eeprom(0x15,RxD_Buff[23]);
-          //  write_eeprom(0x16,RxD_Buff[24]);
-           // write_eeprom(0x17,RxD_Buff[25]);
-           // write_eeprom(0x18,RxD_Buff[26]);
-
-            write_eeprom(0x0A,RxD_Buff[12]);   //Output Both
-            write_eeprom(0x0B,RxD_Buff[13]);
-            write_eeprom(0x0C,RxD_Buff[14]);
-           // write_eeprom(0x1C,RxD_Buff[30]);
-           // write_eeprom(0x1D,RxD_Buff[31]);
-           // write_eeprom(0x1E,RxD_Buff[32]);
-           // write_eeprom(0x1F,RxD_Buff[33]);
-           // write_eeprom(0x20,RxD_Buff[34]);
-
-            write_eeprom(0x0D,RxD_Buff[15]);   //Alarm / Indicator
-            write_eeprom(0x0E,RxD_Buff[16]);
-            write_eeprom(0x0F,RxD_Buff[17]);
-           // write_eeprom(0x24,RxD_Buff[38]);
-           // write_eeprom(0x25,RxD_Buff[39]);
-           // write_eeprom(0x26,RxD_Buff[40]);
-           // write_eeprom(0x27,RxD_Buff[41]);
-           // write_eeprom(0x28,RxD_Buff[42]);
-         
-            // LED Colour Config
-            write_eeprom(0x10,RxD_Buff[18]); //Red1_8
-            write_eeprom(0x11,RxD_Buff[19]); //Red9_10
-            write_eeprom(0x12,RxD_Buff[20]); //Red11_18
-            write_eeprom(0x13,RxD_Buff[21]); //Red19_20
-            write_eeprom(0x14,RxD_Buff[22]); //Green1_8
-            write_eeprom(0x15,RxD_Buff[23]); //Green9_10
-            write_eeprom(0x16,RxD_Buff[24]); //Green11_18
-            write_eeprom(0x17,RxD_Buff[25]); //Green19_20
-               
-            write_eeprom(0x18,RxD_Buff[26]);   //Auto acknowledge
-            write_eeprom(0x19,RxD_Buff[27]);   //Auto acknowledge Time
-            write_eeprom(0x1A,RxD_Buff[28]);   //Flashing Rate
-            write_eeprom(0x1B,RxD_Buff[29]);   //No of point
-            write_eeprom(0x1C,RxD_Buff[30]);   //Master / Slave
-            write_eeprom(0x1D,RxD_Buff[31]);   //Communication Address
-
-            write_eeprom(0x1E,RxD_Buff[32]);   //Communication Address
-            write_eeprom(0x1F,RxD_Buff[33]);   //Communication Address
-            write_eeprom(0x20,RxD_Buff[34]);   //Communication Address
-            write_eeprom(0x21,RxD_Buff[35]);   //Communication Address
-            write_eeprom(0x22,RxD_Buff[36]);   //Communication Address
-            write_eeprom(0x23,RxD_Buff[37]);   //Communication Address
-            write_eeprom(0x24,RxD_Buff[38]);   //Communication Address
-            write_eeprom(0x25,RxD_Buff[39]);   //Communication Address
-            write_eeprom(0x26,RxD_Buff[40]);   //Communication Address
-            write_eeprom(0x27,RxD_Buff[41]);   //Communication Address
-            write_eeprom(0x28,RxD_Buff[42]);   //Communication Address
-            write_eeprom(0x29,RxD_Buff[43]);   //Communication Address
-            write_eeprom(0x2A,RxD_Buff[44]);   //Communication Address
-            write_eeprom(0x2B,RxD_Buff[45]);   //Communication Address
-            write_eeprom(0x2C,RxD_Buff[46]);   //Communication Address
-            write_eeprom(0x2D,RxD_Buff[47]);   //Communication Address
-            write_eeprom(0x2E,RxD_Buff[48]);   //Communication Address
-            write_eeprom(0x2F,RxD_Buff[49]);   //Communication Address
-            write_eeprom(0x30,RxD_Buff[50]);   //Communication Address
-            write_eeprom(0x31,RxD_Buff[51]);   //Communication Address
-         
-         
-            TxD_Buff[0] = Address ;         //Address
-            TxD_Buff[1] = 0x21 ;            //return function code
-
-            CRC(TxD_Buff,2)   ;            //Cal CRC 2 byte
-
-            TxD_Buff[2] = CRC_Hi ;
-            TxD_Buff[3] = CRC_Lo ;
-
-            output_bit(P485ctrl,1);
-            delay_ms(10);
-
-            putc(Txd_Buff[0]);
-            putc(Txd_Buff[1]);
-            putc(Txd_Buff[2]);
-            putc(Txd_Buff[3]);
-
-            delay_ms(3);
-            output_bit(P485ctrl,0);
-            
-            reset_cpu();
-            //Read_Config(); //jj
-         }
-
-         if(RxD_Buff[1] == 0x03)///////////// READ HOLDING REGGISTER /////////////////////
-         {
-            //Data_Buff[0] = Input9_16; //>> Start_Address ;
-            //Data_Buff[1] = Input1_8;// >> Start_Address ;
-            //Data_Buff[2] = Input25_32;
-            //Data_Buff[3] = Input17_24;// >> Start_Address ;
-            Data_Buff[0] = Input9_16;
-            Data_Buff[1] = Input1_8;
-            
-            
-            TxD_Buff[0] = Address ;         //Address
-            TxD_Buff[1] = 0x03 ;           //Function Code
-            TxD_Buff[2] = 0x02 ;          //Byte Count
-            TxD_Buff[3] = Data_Buff[0];   //first byte Data
-            TxD_Buff[4] = Data_Buff[1];   //first byte Data
-
-            CRC(TxD_Buff,5)   ;            //Cal CRC 5 Byte
-
-            TxD_Buff[5] = CRC_Hi ;
-            TxD_Buff[6] = CRC_Lo ;
-
-            //TxD_DataLen = 0x07 ;
-            //rs485_ctrl = 1;
-            //dmsec(4);
-            //send = 1;
-            //TI=1;
             output_bit(P485ctrl,1);
             restart_wdt();
             delay_ms(4);
             restart_wdt();
-
+            
+            
+            
             putc(TxD_Buff[0]) ;               //Address
             putc(TxD_Buff[1]) ;               //Function Code
             putc(TxD_Buff[2]) ;               //Byte Count
@@ -2102,135 +1232,316 @@ void Modbus_Function(void)
             putc(TxD_Buff[4]) ;
             putc(TxD_Buff[5]) ;
             putc(TxD_Buff[6]) ;
-            //putc(TxD_Buff[7]) ;
-            //putc(TxD_Buff[8]) ;
-            //putc(TxD_Buff[9]) ;
-
+            putc(TxD_Buff[7]) ;
+            putc(TxD_Buff[8]) ;
+            putc(TxD_Buff[9]) ;
+            putc(TxD_Buff[10]) ;
+            putc(TxD_Buff[11]) ;
+            putc(TxD_Buff[12]) ;
+            putc(TxD_Buff[13]) ;
+            putc(TxD_Buff[14]) ;
+            putc(TxD_Buff[15]) ;
+            putc(TxD_Buff[16]) ;
+            putc(TxD_Buff[17]) ;
+            putc(TxD_Buff[18]) ;
+            putc(TxD_Buff[19]) ;
+            putc(TxD_Buff[20]) ;
+   
             restart_wdt();
             delay_ms(3);
             restart_wdt();
             output_bit(P485ctrl,0);
-         /*
-            //Do Read Holding Register
-            Start_Address = RxD_Buff[2] ;
-            Start_Address = (Start_Address << 8) | RxD_Buff[3] ;   //Start Address 16 bit
-            No_PointCount = RxD_Buff[4] ;
-            No_PointCount = (No_PointCount << 8) | RxD_Buff[5] ;      //No. of Point 16 bit
-
-            if(Start_Address < 0x02 && (Start_Address + No_PointCount) <= 0x03)  //Valid point 0-1
-            {
-               if(No_PointCount == 1) Data_ByteCount = 0x01 ;         // 1 point
-               else if(No_PointCount == 2) Data_ByteCount = 0x02 ;    // 2 point
-
-               if(Data_ByteCount == 0x01)
+              
+           
+            /////////////////////////////////////////
+            
+           enable_interrupts(INT_TIMER2); 
+        
+          }
+   
+          else if(RxD_Buff[1] == 0x05)///////////// FORCE COIL /////////////////////
+          {
+               //Do Force Coil
+               Start_Address = RxD_Buff[2] ;
+               Start_Address = (Start_Address << 8) | RxD_Buff[3] ;   //Coil Address 16 bit
+               No_PointCount = RxD_Buff[4] ;
+               No_PointCount = (No_PointCount << 8) | RxD_Buff[5] ;   //Force Data 16 bit FF00 = ON, 00FF = OFF
+   
+               if(Start_Address == 0x00)   ////// Acknowlegde //////
                {
-                  if(Start_Address == 0x00)
+                  if(No_PointCount == 0xFF00)   //ON
                   {
-                      TxD_Buff[0] = Address ;         //Address
-                  TxD_Buff[1] = 0x03 ;         //Function Code
-                  TxD_Buff[2] = Data_ByteCount ;   //Byte Count
-                  TxD_Buff[3] = Data_Buff[0] ;      //first byte Data
-                  TxD_Buff[4] = Data_Buff[1] ;      //second byte Data
-                  TxD_Buff[5] = Data_Buff[2] ;  
-
-                  CRC(TxD_Buff,6)   ;            //Cal CRC 5 Byte
-
-                  TxD_Buff[6] = CRC_Hi ;
-                  TxD_Buff[7] = CRC_Lo ;
-
-                  //TxD_DataLen = 0x07 ;
-                  //rs485_ctrl = 1;
-                  //dmsec(4);
-                  //send = 1;
-                  //TI=1;
-                  output_bit(P485ctrl,1);
-                  restart_wdt();
-                  delay_ms(4);
-                  restart_wdt();
-
-                  putc(TxD_Buff[0]) ;               //Address
-                  putc(TxD_Buff[1]) ;               //Function Code
-                  putc(TxD_Buff[2]) ;               //Byte Count
-                  putc(TxD_Buff[3]) ;
-                  putc(TxD_Buff[4]) ;
-                  putc(TxD_Buff[5]) ;
-                  putc(TxD_Buff[6]) ;
-                  putc(TxD_Buff[7]) ;
-                  //putc(TxD_Buff[8]) ;
-                  //putc(TxD_Buff[9]) ;
-
-                  restart_wdt();
-                  delay_ms(3);
-                  restart_wdt();
-                  output_bit(P485ctrl,0);
-                  }
-                  else if(Start_Address == 0x01)
-                  {
-                      TxD_Buff[0] = Address ;         //Address
-                  TxD_Buff[1] = 0x01 ;         //Function Code
-                  TxD_Buff[2] = Data_ByteCount ;   //Byte Count
-                  TxD_Buff[3] = Data_Buff[0] ;      //first byte Data
-                  TxD_Buff[4] = Data_Buff[1] ;      //second byte Data
-                  TxD_Buff[5] = Data_Buff[2] ;  
-
-                  CRC(TxD_Buff,6)   ;            //Cal CRC 5 Byte
-
-                  TxD_Buff[6] = CRC_Hi ;
-                  TxD_Buff[7] = CRC_Lo ;
-
-                  //TxD_DataLen = 0x07 ;
-                  //rs485_ctrl = 1;
-                  //dmsec(4);
-                  //send = 1;
-                  //TI=1;
-                  output_bit(P485ctrl,1);
-                  restart_wdt();
-                  delay_ms(4);
-                  restart_wdt();
-
-                  putc(TxD_Buff[0]) ;               //Address
-                  putc(TxD_Buff[1]) ;               //Function Code
-                  putc(TxD_Buff[2]) ;               //Byte Count
-                  putc(TxD_Buff[3]) ;
-                  putc(TxD_Buff[4]) ;
-                  putc(TxD_Buff[5]) ;
-                  putc(TxD_Buff[6]) ;
-                  putc(TxD_Buff[7]) ;
-                  //putc(TxD_Buff[8]) ;
-                  //putc(TxD_Buff[9]) ;
-
-                  restart_wdt();
-                  delay_ms(3);
-                  restart_wdt();
-                  output_bit(P485ctrl,0);
+                     //Modbus_ACK = 1 ;
+                     AutoAckFlag = 1;
+   
+                     TxD_Buff[0] = Address ;         //Address
+                     TxD_Buff[1] = 0x05 ;         //Function Code
+                     TxD_Buff[2] = RxD_Buff[2] ;      //Coil Address Hi
+                     TxD_Buff[3] = RxD_Buff[3] ;      //Coil Address Lo
+                     TxD_Buff[4] = RxD_Buff[4] ;      //Force Data Hi
+                     TxD_Buff[5] = RxD_Buff[5] ;      //Force Data Lo
+   
+                     CRC(TxD_Buff,6);            //Cal CRC 6 Byte
+   
+                     TxD_Buff[6] = CRC_Hi ;
+                     TxD_Buff[7] = CRC_Lo ;
+   
+                 output_bit(P485ctrl,1);
+                     restart_wdt();
+                     delay_ms(4);
+                     restart_wdt();
+   
+                     putc(TxD_Buff[0]) ;               //Address
+                     putc(TxD_Buff[1]) ;               //Function Code
+                     putc(TxD_Buff[2]) ;               //Byte Count
+                     putc(TxD_Buff[3]) ;
+                     putc(TxD_Buff[4]) ;
+                     putc(TxD_Buff[5]) ;
+                     putc(TxD_Buff[6]) ;
+                     putc(TxD_Buff[7]) ;
+   
+                     restart_wdt();
+                     delay_ms(3);
+                     restart_wdt();
+                     output_bit(P485ctrl,0);
+                 
                   }
                }
-               else if(Data_ByteCount == 0x02)
+               else if(Start_Address == 0x01)   ///// Reset //////
                {
-                  if(Start_Address == 0x00)
+                  if(No_PointCount == 0xFF00)   //ON
                   {
-                      TxD_Buff[0] = Address ;         //Address
-                  TxD_Buff[1] = 0x03 ;         //Function Code
-                  TxD_Buff[2] = Data_ByteCount ;   //Byte Count
-                  TxD_Buff[3] = Data_Buff[0] ;      //first byte Data
-                  TxD_Buff[4] = Data_Buff[1] ;      //second byte Data
-                  TxD_Buff[5] = Data_Buff[2] ;  
-
-                  CRC(TxD_Buff,6)   ;            //Cal CRC 5 Byte
-
+                     //Modbus_RET = 1 ;
+                     AutoResetFlag = 1;
+                     
+                     TxD_Buff[0] = Address ;         //Address
+                     TxD_Buff[1] = 0x05 ;         //Function Code
+                     TxD_Buff[2] = RxD_Buff[2] ;      //Coil Address Hi
+                     TxD_Buff[3] = RxD_Buff[3] ;      //Coil Address Lo
+                     TxD_Buff[4] = RxD_Buff[4] ;      //Force Data Hi
+                     TxD_Buff[5] = RxD_Buff[5] ;      //Force Data Lo
+   
+                     CRC(TxD_Buff,6)   ;            //Cal CRC 6 Byte
+   
+                     TxD_Buff[6] = CRC_Hi ;
+                     TxD_Buff[7] = CRC_Lo ;
+   
+                     output_bit(P485ctrl,1);
+                     restart_wdt();
+                     delay_ms(4);
+                     restart_wdt();
+   
+                     putc(TxD_Buff[0]) ;               //Address
+                     putc(TxD_Buff[1]) ;               //Function Code
+                     putc(TxD_Buff[2]) ;               //Byte Count
+                     putc(TxD_Buff[3]) ;
+                     putc(TxD_Buff[4]) ;
+                     putc(TxD_Buff[5]) ;
+                     putc(TxD_Buff[6]) ;
+                     putc(TxD_Buff[7]) ;
+                     //putc(TxD_Buff[8]) ;
+                     //putc(TxD_Buff[9]) ;
+   
+                     restart_wdt();
+                     delay_ms(3);
+                     restart_wdt();
+                     output_bit(P485ctrl,0);
+                 
+                  }
+               }
+               else if(Start_Address == 0x02)   ///// Test //////
+               {
+                  if(No_PointCount == 0xFF00)   //ON
+                  {
+                     //Modbus_Lamp_Test = 1 ;
+                     AutoTestFlag = 1;
+   
+                     TxD_Buff[0] = Address ;         //Address
+                     TxD_Buff[1] = 0x05 ;         //Function Code
+                     TxD_Buff[2] = RxD_Buff[2] ;      //Coil Address Hi
+                     TxD_Buff[3] = RxD_Buff[3] ;      //Coil Address Lo
+                     TxD_Buff[4] = RxD_Buff[4] ;      //Force Data Hi
+                     TxD_Buff[5] = RxD_Buff[5] ;      //Force Data Lo
+   
+                     CRC(TxD_Buff,6)   ;            //Cal CRC 6 Byte
+   
+                     TxD_Buff[6] = CRC_Hi ;
+                     TxD_Buff[7] = CRC_Lo ;
+   
+                     output_bit(P485ctrl,1);
+                     restart_wdt();
+                     delay_ms(4);
+                     restart_wdt();
+   
+                     putc(TxD_Buff[0]) ;               //Address
+                     putc(TxD_Buff[1]) ;               //Function Code
+                     putc(TxD_Buff[2]) ;               //Byte Count
+                     putc(TxD_Buff[3]) ;
+                     putc(TxD_Buff[4]) ;
+                     putc(TxD_Buff[5]) ;
+                     putc(TxD_Buff[6]) ;
+                     putc(TxD_Buff[7]) ;
+                     //putc(TxD_Buff[8]) ;
+                     //putc(TxD_Buff[9]) ;
+   
+                     restart_wdt();
+                     delay_ms(3);
+                     restart_wdt();
+                     output_bit(P485ctrl,0);
+                
+                  }
+                  else if(No_PointCount == 0x00)   //OFF
+                  {
+                     //Modbus_Lamp_Test = 0 ;
+                     AutoTestFlag = 0;
+                     Read_input();
+                     AutoAckFlag = 1;
+                     check_ack();
+                     AutoResetFlag = 1;
+                     check_reset();
+   
+                     TxD_Buff[0] = Address ;         //Address
+                     TxD_Buff[1] = 0x05 ;         //Function Code
+                     TxD_Buff[2] = RxD_Buff[2] ;      //Coil Address Hi
+                     TxD_Buff[3] = RxD_Buff[3] ;      //Coil Address Lo
+                     TxD_Buff[4] = RxD_Buff[4] ;      //Force Data Hi
+                     TxD_Buff[5] = RxD_Buff[5] ;      //Force Data Lo
+   
+                     CRC(TxD_Buff,6)   ;            //Cal CRC 6 Byte
+   
+                     TxD_Buff[6] = CRC_Hi ;
+                     TxD_Buff[7] = CRC_Lo ;
+   
+                     output_bit(P485ctrl,1);
+                     restart_wdt();
+                     delay_ms(4);
+                     restart_wdt();
+   
+                     putc(TxD_Buff[0]) ;               //Address
+                     putc(TxD_Buff[1]) ;               //Function Code
+                     putc(TxD_Buff[2]) ;               //Byte Count
+                     putc(TxD_Buff[3]) ;
+                     putc(TxD_Buff[4]) ;
+                     putc(TxD_Buff[5]) ;
+                     putc(TxD_Buff[6]) ;
+                     putc(TxD_Buff[7]) ;
+                     //putc(TxD_Buff[8]) ;
+                     //putc(TxD_Buff[9]) ;
+   
+                     restart_wdt();
+                     delay_ms(3);
+                     restart_wdt();
+                     output_bit(P485ctrl,0);
+                     
+                  }
+               }
+               else if(Start_Address == 0x03)   ///// Function Test //////
+               {
+                  if(No_PointCount == 0xFF00)   //ON
+                  {
+                     //Modbus_Lamp_Test = 1 ;
+                     Test_fault = 1 ;
+   
+                     TxD_Buff[0] = Address ;         //Address
+                     TxD_Buff[1] = 0x05 ;         //Function Code
+                     TxD_Buff[2] = RxD_Buff[2] ;      //Coil Address Hi
+                     TxD_Buff[3] = RxD_Buff[3] ;      //Coil Address Lo
+                     TxD_Buff[4] = RxD_Buff[4] ;      //Force Data Hi
+                     TxD_Buff[5] = RxD_Buff[5] ;      //Force Data Lo
+   
+                     CRC(TxD_Buff,6)   ;            //Cal CRC 6 Byte
+   
+                     TxD_Buff[6] = CRC_Hi ;
+                     TxD_Buff[7] = CRC_Lo ;
+   
+                     output_bit(P485ctrl,1);
+                     restart_wdt();
+                     delay_ms(4);
+                     restart_wdt();
+   
+                     putc(TxD_Buff[0]) ;               //Address
+                     putc(TxD_Buff[1]) ;               //Function Code
+                     putc(TxD_Buff[2]) ;               //Byte Count
+                     putc(TxD_Buff[3]) ;
+                     putc(TxD_Buff[4]) ;
+                     putc(TxD_Buff[5]) ;
+                     putc(TxD_Buff[6]) ;
+                     putc(TxD_Buff[7]) ;
+                     //putc(TxD_Buff[8]) ;
+                     //putc(TxD_Buff[9]) ;
+   
+                     restart_wdt();
+                     delay_ms(10);
+                     restart_wdt();
+                     output_bit(P485ctrl,0);
+                  }
+                  else if(No_PointCount == 0x00)   //OFF
+                  {
+                     //Modbus_Lamp_Test = 0 ;
+                     Test_fault = 0;
+                     Read_input();
+                     AutoAckFlag = 1;
+                     check_ack();
+                     AutoResetFlag = 1;
+                     check_reset();
+   
+                     TxD_Buff[0] = Address ;         //Address
+                     TxD_Buff[1] = 0x05 ;         //Function Code
+                     TxD_Buff[2] = RxD_Buff[2] ;      //Coil Address Hi
+                     TxD_Buff[3] = RxD_Buff[3] ;      //Coil Address Lo
+                     TxD_Buff[4] = RxD_Buff[4] ;      //Force Data Hi
+                     TxD_Buff[5] = RxD_Buff[5] ;      //Force Data Lo
+   
+                     CRC(TxD_Buff,6)   ;            //Cal CRC 6 Byte
+   
+                     TxD_Buff[6] = CRC_Hi ;
+                     TxD_Buff[7] = CRC_Lo ;
+   
+                     output_bit(P485ctrl,1);
+                     restart_wdt();
+                     delay_ms(4);
+                     restart_wdt();
+   
+                     putc(TxD_Buff[0]) ;               //Address
+                     putc(TxD_Buff[1]) ;               //Function Code
+                     putc(TxD_Buff[2]) ;               //Byte Count
+                     putc(TxD_Buff[3]) ;
+                     putc(TxD_Buff[4]) ;
+                     putc(TxD_Buff[5]) ;
+                     putc(TxD_Buff[6]) ;
+                     putc(TxD_Buff[7]) ;
+                     //putc(TxD_Buff[8]) ;
+                     //putc(TxD_Buff[9]) ;
+   
+                     restart_wdt();
+                     delay_ms(3);
+                     restart_wdt();
+                     output_bit(P485ctrl,0);
+                     
+                  }
+               }
+               else if(Start_Address == 0x64)   ///// Change Modbus Addr //////
+               {
+                  Address = No_PointCount;
+                  write_eeprom(0x1D,Address);   //Communication Address
+                  
+                  TxD_Buff[0] = Address ;         //Address
+                  TxD_Buff[1] = 0x05 ;         //Function Code
+                  TxD_Buff[2] = RxD_Buff[2] ;      //Coil Address Hi
+                  TxD_Buff[3] = RxD_Buff[3] ;      //Coil Address Lo
+                  TxD_Buff[4] = RxD_Buff[4] ;      //Force Data Hi
+                  TxD_Buff[5] = RxD_Buff[5] ;      //Force Data Lo
+   
+                  CRC(TxD_Buff,6)   ;            //Cal CRC 6 Byte
+   
                   TxD_Buff[6] = CRC_Hi ;
                   TxD_Buff[7] = CRC_Lo ;
-
-                  //TxD_DataLen = 0x07 ;
-                  //rs485_ctrl = 1;
-                  //dmsec(4);
-                  //send = 1;
-                  //TI=1;
+   
                   output_bit(P485ctrl,1);
                   restart_wdt();
                   delay_ms(4);
                   restart_wdt();
-
+   
                   putc(TxD_Buff[0]) ;               //Address
                   putc(TxD_Buff[1]) ;               //Function Code
                   putc(TxD_Buff[2]) ;               //Byte Count
@@ -2241,68 +1552,485 @@ void Modbus_Function(void)
                   putc(TxD_Buff[7]) ;
                   //putc(TxD_Buff[8]) ;
                   //putc(TxD_Buff[9]) ;
-
+   
                   restart_wdt();
                   delay_ms(3);
                   restart_wdt();
                   output_bit(P485ctrl,0);
-                  }
+   
+   
+                  //save_addr();
                }
             }
-            else
+            //--------------------------------------------------//
+   
+            else if(RxD_Buff[1] == 0x21)///////////// WRITE SETTING /////////////////////
             {
-               //invalid parameter
+   
+               write_eeprom(0x00,0x0F);
+   
+               write_eeprom(0x01,RxD_Buff[3]);   //Input Type
+               write_eeprom(0x02,RxD_Buff[4]);
+               write_eeprom(0x03,RxD_Buff[5]);
+   
+   
+               write_eeprom(0x04,RxD_Buff[6]);   //Fault Type
+               write_eeprom(0x05,RxD_Buff[7]);
+               write_eeprom(0x06,RxD_Buff[8]);
+   
+               write_eeprom(0x07,RxD_Buff[9]);   //Output Type
+               write_eeprom(0x08,RxD_Buff[10]);
+               write_eeprom(0x09,RxD_Buff[11]);
+   
+               write_eeprom(0x0A,RxD_Buff[12]);   //Output Both
+               write_eeprom(0x0B,RxD_Buff[13]);
+               write_eeprom(0x0C,RxD_Buff[14]);
+    
+               write_eeprom(0x0D,RxD_Buff[15]);   //Alarm / Indicator
+               write_eeprom(0x0E,RxD_Buff[16]);
+               write_eeprom(0x0F,RxD_Buff[17]);
+   
+               // LED Colour Config
+               write_eeprom(0x10,RxD_Buff[18]); //Red1_8
+               write_eeprom(0x11,RxD_Buff[19]); //Red9_10
+               write_eeprom(0x12,RxD_Buff[20]); //Red11_18
+               write_eeprom(0x13,RxD_Buff[21]); //Red19_20
+               write_eeprom(0x14,RxD_Buff[22]); //Green1_8
+               write_eeprom(0x15,RxD_Buff[23]); //Green9_10
+               write_eeprom(0x16,RxD_Buff[24]); //Green11_18
+               write_eeprom(0x17,RxD_Buff[25]); //Green19_20
+                  
+               write_eeprom(0x18,RxD_Buff[26]);   //Auto acknowledge
+               write_eeprom(0x19,RxD_Buff[27]);   //Auto acknowledge Time
+               write_eeprom(0x1A,RxD_Buff[28]);   //Flashing Rate
+               write_eeprom(0x1B,RxD_Buff[29]);   //No of point
+               write_eeprom(0x1C,RxD_Buff[30]);   //Master / Slave
+               write_eeprom(0x1D,RxD_Buff[31]);   //Communication Address
+   
+               write_eeprom(0x1E,RxD_Buff[32]);   //Communication Address
+               write_eeprom(0x1F,RxD_Buff[33]);   //Communication Address
+               write_eeprom(0x20,RxD_Buff[34]);   //Communication Address
+               write_eeprom(0x21,RxD_Buff[35]);   //Communication Address
+               write_eeprom(0x22,RxD_Buff[36]);   //Communication Address
+               write_eeprom(0x23,RxD_Buff[37]);   //Communication Address
+               write_eeprom(0x24,RxD_Buff[38]);   //Communication Address
+               write_eeprom(0x25,RxD_Buff[39]);   //Communication Address
+               write_eeprom(0x26,RxD_Buff[40]);   //Communication Address
+               write_eeprom(0x27,RxD_Buff[41]);   //Communication Address
+               write_eeprom(0x28,RxD_Buff[42]);   //Communication Address
+               write_eeprom(0x29,RxD_Buff[43]);   //Communication Address
+               write_eeprom(0x2A,RxD_Buff[44]);   //Communication Address
+               write_eeprom(0x2B,RxD_Buff[45]);   //Communication Address
+               write_eeprom(0x2C,RxD_Buff[46]);   //Communication Address
+               write_eeprom(0x2D,RxD_Buff[47]);   //Communication Address
+               write_eeprom(0x2E,RxD_Buff[48]);   //Communication Address
+               write_eeprom(0x2F,RxD_Buff[49]);   //Communication Address
+               write_eeprom(0x30,RxD_Buff[50]);   //Communication Address
+               write_eeprom(0x31,RxD_Buff[51]);   //Communication Address
+               
+               int16  a = 0; 
+               unsigned char  phonenum;
+               for(; ; a++)
+               {
+                  restart_wdt();
+                  phonenum = RxD_Buff[52 + a];
+                  if((phonenum == 0x0D) || (a > 15))
+                  {
+                     sms_phonenumber[a] =  '\0' ;
+                     write_eeprom(0x32+a,phonenum);
+                     break;
+                  }
+                  else
+                  {
+                     sms_phonenumber[a] = phonenum;
+                     
+                     write_eeprom(0x32+a,phonenum);
+                  }
+               }
+            
+            
                TxD_Buff[0] = Address ;         //Address
-               TxD_Buff[1] = 0x81 ;         //Function Code
-               TxD_Buff[2] = 0x02 ;         //illegal data address
-
-               CRC(TxD_Buff,3)   ;            //Cal CRC 3 Byte
-
-               TxD_Buff[3] = CRC_Hi ;
-               TxD_Buff[4] = CRC_Lo ;
-
+               TxD_Buff[1] = 0x21 ;            //return function code
+   
+               CRC(TxD_Buff,2)   ;            //Cal CRC 2 byte
+   
+               TxD_Buff[2] = CRC_Hi ;
+               TxD_Buff[3] = CRC_Lo ;
+   
                output_bit(P485ctrl,1);
                delay_ms(10);
-
+   
                putc(Txd_Buff[0]);
                putc(Txd_Buff[1]);
                putc(Txd_Buff[2]);
                putc(Txd_Buff[3]);
-               putc(Txd_Buff[4]);
-
+   
+               delay_ms(3);
+               output_bit(P485ctrl,0);
+               
+               reset_cpu();
+               //Read_Config(); //jj
+            }
+            
+            else if(RxD_Buff[1] == 0x22)///////////// WRITE Faultname /////////////////////
+            {
+               
+               //SMS_Massage
+               int16  i =4,j=0,k=0; //i =4 are first data from RxD_Buff[]
+               for(; ; i++,j++)
+               {
+                  restart_wdt();
+                  if((RxD_Buff[i] == 0x0D) || (j > 30))
+                  {
+                     write_eeprom(0x5D+i,0x0D);
+                     break;
+                  }
+                  else
+                  {
+                     SMS_Massage1[j] = RxD_Buff[i];
+                     
+                     write_eeprom(0x5D+i,RxD_Buff[i]);
+                  }
+               }
+               SMS_Massage1[j] = '\0' ; // end string
+               
+               j=0;
+               i++;
+               
+               for(; ; i++,j++)
+               {
+                  restart_wdt();
+                  if((RxD_Buff[i] == 0x0D) || (j > 30))
+                  {  
+                     write_eeprom(0x5D+i,0x0D);
+                     break;
+                  }
+                  else
+                  {
+                     SMS_Massage2[j] = RxD_Buff[i];
+                     write_eeprom(0x5D+i,RxD_Buff[i]);
+                  }
+               }
+               SMS_Massage2[j] = '\0' ; // end string
+               
+               j=0;
+               i++;
+               
+               for(; ; i++,j++)
+               {
+                  restart_wdt();
+                  if((RxD_Buff[i] == 0x0D) || (j > 30))
+                  {
+                     write_eeprom(0x5D+i,0x0D);
+                     break;
+                  }
+                  else
+                  {
+                     SMS_Massage3[j] = RxD_Buff[i];
+                     write_eeprom(0x5D+i,RxD_Buff[i]);
+                  }
+               }
+               SMS_Massage3[j] = '\0' ; // end string
+               
+               j=0;
+               i++;
+               
+               for(; ; i++,j++)
+               {
+                  restart_wdt();
+                  if((RxD_Buff[i] == 0x0D) || (j > 30))
+                  {
+                     write_eeprom(0x5D+i,0x0D);
+                     break;
+                  }
+                  else
+                  {
+                     SMS_Massage4[j] = RxD_Buff[i];
+                     write_eeprom(0x5D+i,RxD_Buff[i]);
+                  }
+               }
+               SMS_Massage4[j] = '\0' ; // end string
+               
+               j=0;
+               i++;
+               
+               for(; ; i++,j++)
+               {
+                  restart_wdt();
+                  if((RxD_Buff[i] == 0x0D) || (j > 30))
+                  {
+                     write_eeprom(0x5D+i,0x0D);
+                     break;
+                  }
+                  else
+                  {
+                     SMS_Massage5[j] = RxD_Buff[i];
+                     write_eeprom(0x5D+i,RxD_Buff[i]);
+                  }
+               }
+               SMS_Massage5[j] = '\0' ; // end string
+               
+               j=0;
+               i++;
+               
+               for(; ; i++,j++)
+               {
+                  restart_wdt();
+                  if((RxD_Buff[i] == 0x0D) || (j > 30))
+                  {
+                     write_eeprom(0x5D+i,0x0D);
+                     break;
+                  }
+                  else
+                  {
+                     write_eeprom(0x5D+i,RxD_Buff[i]);
+                     SMS_Massage6[j] = RxD_Buff[i];
+                  }
+               }
+               SMS_Massage6[j] = '\0' ; // end string
+               
+               j=0;
+               i++;
+               
+               for(; ; i++,j++)
+               {
+                  restart_wdt();
+                  if((RxD_Buff[i] == 0x0D) || (j > 30))
+                  {
+                     write_eeprom(0x5D+i,0x0D);
+                     break;
+                  }
+                  else
+                  {
+                     SMS_Massage7[j] = RxD_Buff[i];
+                     write_eeprom(0x5D+i,RxD_Buff[i]);
+                  }
+               }
+               SMS_Massage7[j] = '\0' ; // end string
+               
+               j=0;
+               i++;
+               
+               for(; ; i++,j++)
+               {
+                  restart_wdt();
+                  if((RxD_Buff[i] == 0x0D) || (j > 30))
+                  {
+                     write_eeprom(0x5D+i,0x0D);
+                     break;
+                  }
+                  else
+                  {
+                     SMS_Massage8[j] = RxD_Buff[i];
+                     write_eeprom(0x5D+i,RxD_Buff[i]);
+                  }
+               }
+               SMS_Massage8[j] = '\0' ; // end string
+               
+               /////////////////////////////////////////////
+               j=0;
+               i++;
+               
+               for(; ; i++,j++)
+               {
+                  restart_wdt();
+                  if((RxD_Buff[i] == 0x0D) || (j > 30))
+                  {
+                     write_eeprom(0x5D+i,RxD_Buff[i]);
+                     break;
+                  }
+                  else
+                  {
+                     SMS_Massage9[j] = RxD_Buff[i];
+                     write_eeprom(0x5D+i,RxD_Buff[i]);
+                  }
+               }
+               SMS_Massage9[j] = '\0' ; // end string
+               j=0;
+               i++;
+               
+               for(; ; i++,j++)
+               {
+                  restart_wdt();
+                  if((RxD_Buff[i] == 0x0D) || (j > 30))
+                  {
+                     write_eeprom(0x5D+i,RxD_Buff[i]);
+                     break;
+                  }
+                  else
+                  {
+                     SMS_Massage10[j] = RxD_Buff[i];
+                     write_eeprom(0x5D+i,RxD_Buff[i]);
+                  }
+               }
+               SMS_Massage10[j] = '\0' ; // end string
+               
+               j=0;
+               i++;
+               for(; ; i++,j++)
+               {
+                  restart_wdt();
+                  if((RxD_Buff[i] == 0x0D) || (j > 30))
+                  {
+                     write_eeprom(0x5D+i,RxD_Buff[i]);
+                     break;
+                  }
+                  else
+                  {
+                     SMS_Massage11[j] = RxD_Buff[i];
+                     write_eeprom(0x5D+i,RxD_Buff[i]);
+                  }
+               }
+               SMS_Massage11[j] = '\0' ; // end string
+               
+               j=0;
+               i++;
+               for(; ; i++,j++)
+               {
+                  restart_wdt();
+                  if((RxD_Buff[i] == 0x0D) || (j > 30))
+                  {
+                     write_eeprom(0x5D+i,RxD_Buff[i]);
+                     break;
+                  }
+                  else
+                  {
+                     SMS_Massage12[j] = RxD_Buff[i];
+                     write_eeprom(0x5D+i,RxD_Buff[i]);
+                  }
+               }
+               SMS_Massage12[j] = '\0' ; // end string
+               
+               j=0;
+               i++;
+               for(; ; i++,j++)
+               {
+                  restart_wdt();
+                  if((RxD_Buff[i] == 0x0D) || (j > 30))
+                  {
+                     write_eeprom(0x5D+i,RxD_Buff[i]);
+                     break;
+                  }
+                  else
+                  {
+                     SMS_Massage13[j] = RxD_Buff[i];
+                     write_eeprom(0x5D+i,RxD_Buff[i]);
+                  }
+               }
+               SMS_Massage13[j] = '\0' ; // end string
+               
+               j=0;
+               i++;
+               for(; ; i++,j++)
+               {
+                  restart_wdt();
+                  if((RxD_Buff[i] == 0x0D) || (j > 30))
+                  {
+                     write_eeprom(0x5D+i,RxD_Buff[i]);
+                     break;
+                  }
+                  else
+                  {
+                     SMS_Massage14[j] = RxD_Buff[i];
+                     write_eeprom(0x5D+i,RxD_Buff[i]);
+                  }
+               }
+               SMS_Massage14[j] = '\0' ; // end string
+               
+               j=0;
+               i++;
+               for(; ; i++,j++)
+               {
+                  restart_wdt();
+                  if((RxD_Buff[i] == 0x0D) || (j > 30))
+                  {
+                     write_eeprom(0x5D+i,RxD_Buff[i]);
+                     break;
+                  }
+                  else
+                  {
+                     SMS_Massage15[j] = RxD_Buff[i];
+                     write_eeprom(0x5D+i,RxD_Buff[i]);
+                  }
+               }
+               SMS_Massage15[j] = '\0' ; // end string
+               
+               j=0;
+               i++;
+               for(; ; i++,j++)
+               {
+                  restart_wdt();
+                  if((RxD_Buff[i] == 0x0D) || (j > 30))
+                  {
+                     write_eeprom(0x5D+i,RxD_Buff[i]);
+                     break;
+                  }
+                  else
+                  {
+                     SMS_Massage16[j] = RxD_Buff[i];
+                     write_eeprom(0x5D+i,RxD_Buff[i]);
+                  }
+               }
+               SMS_Massage16[j] = '\0' ; // end string
+               
+            
+               TxD_Buff[0] = Address ;         //Address
+               TxD_Buff[1] = 0x22 ;            //return function code
+   
+               CRC(TxD_Buff,2)   ;            //Cal CRC 2 byte
+   
+               TxD_Buff[2] = CRC_Hi ;
+               TxD_Buff[3] = CRC_Lo ;
+   
+               output_bit(P485ctrl,1);
+               delay_ms(10);
+   
+               putc(Txd_Buff[0]);
+               putc(Txd_Buff[1]);
+               putc(Txd_Buff[2]);
+               putc(Txd_Buff[3]);
+   
                delay_ms(3);
                output_bit(P485ctrl,0);
             }
-            */
-         }
-       
-       /*-----JACK Comment 18/6/58----------//
-         else
-         {
-            //Invalid function
-            TxD_Buff[0] = Address ;         //Address
-            TxD_Buff[1] = 0x81 ;         //Function Code
-            TxD_Buff[2] = 0x01 ;         //illegal function
-
-            CRC(TxD_Buff,3)   ;            //Cal CRC 3 Byte
-
-            TxD_Buff[3] = CRC_Hi ;
-            TxD_Buff[4] = CRC_Lo ;
-
-            output_bit(P485ctrl,1);
-            delay_ms(10);
-
-            putc(Txd_Buff[0]);
-            putc(Txd_Buff[1]);
-            putc(Txd_Buff[2]);
-            putc(Txd_Buff[3]);
-            putc(Txd_Buff[4]);
-
-            delay_ms(3);
-            output_bit(P485ctrl,0);
-         }
-       *///-----JACK Comment----------//
-      }  
+            ////////////////////////////// WRITE Faultname //////////////////////////
+   
+            if(RxD_Buff[1] == 0x03)///////////// READ HOLDING REGGISTER /////////////////////
+            {
+               Data_Buff[0] = Input9_16;
+               Data_Buff[1] = Input1_8;
+               
+               
+               TxD_Buff[0] = Address ;         //Address
+               TxD_Buff[1] = 0x03 ;           //Function Code
+               TxD_Buff[2] = 0x02 ;          //Byte Count
+               TxD_Buff[3] = Data_Buff[0];   //first byte Data
+               TxD_Buff[4] = Data_Buff[1];   //first byte Data
+   
+               CRC(TxD_Buff,5)   ;            //Cal CRC 5 Byte
+   
+               TxD_Buff[5] = CRC_Hi ;
+               TxD_Buff[6] = CRC_Lo ;
+   
+               output_bit(P485ctrl,1);
+               restart_wdt();
+               delay_ms(4);
+               restart_wdt();
+   
+               putc(TxD_Buff[0]) ;               //Address
+               putc(TxD_Buff[1]) ;               //Function Code
+               putc(TxD_Buff[2]) ;               //Byte Count
+               putc(TxD_Buff[3]) ;
+               putc(TxD_Buff[4]) ;
+               putc(TxD_Buff[5]) ;
+               putc(TxD_Buff[6]) ;
+   
+               restart_wdt();
+               delay_ms(3);
+               restart_wdt();
+               output_bit(P485ctrl,0);
+            }
+      }  //if(RxD_Buff[1] == address)
 
       Send_check_Time = 500; //5 Second
    }
@@ -2994,19 +2722,6 @@ void Read_Config(void)
    FaultType.B14 = EEpDat >> 5;
    FaultType.B15 = EEpDat >> 6;
    FaultType.B16 = EEpDat >> 7;
-/*   
-   EEpDat = read_eeprom(0x06);   // Fault type 9-16
-   FaultType17_24 = EEpDat;
-
-   FaultType.B17 = EEpDat;
-   FaultType.B18 = EEpDat >> 1;
-   FaultType.B19 = EEpDat >> 2;
-   FaultType.B20 = EEpDat >> 3;
-   FaultType.B21 = EEpDat >> 4;
-   FaultType.B22 = EEpDat >> 5;
-   FaultType.B23 = EEpDat >> 6;
-   FaultType.B24 = EEpDat >> 7;
-*/
 
    ////////////////////////////////////////////////
 
@@ -3033,19 +2748,7 @@ void Read_Config(void)
    OutputType.B14 = EEpDat >> 5;
    OutputType.B15 = EEpDat >> 6;
    OutputType.B16 = EEpDat >> 7;
-/*   
-   EEpDat = read_eeprom(0x09);   // Output type 9-16
-   OutputType17_24 = EEpDat;
 
-   OutputType.B17 = EEpDat;
-   OutputType.B18 = EEpDat >> 1;
-   OutputType.B19 = EEpDat >> 2;
-   OutputType.B20 = EEpDat >> 3;
-   OutputType.B21 = EEpDat >> 4;
-   OutputType.B22 = EEpDat >> 5;
-   OutputType.B23 = EEpDat >> 6;
-   OutputType.B24 = EEpDat >> 7;
-*/
 
    ////////////////////////////////////////
 
@@ -3072,19 +2775,7 @@ void Read_Config(void)
    OutputBoth.B14 = EEpDat >> 5;
    OutputBoth.B15 = EEpDat >> 6;
    OutputBoth.B16 = EEpDat >> 7;
-/*   
-   EEpDat = read_eeprom(0x0C);   // Output Both 9-16
-   OutputBoth17_24 = EEpDat;
 
-   OutputBoth.B17 = EEpDat;
-   OutputBoth.B18 = EEpDat >> 1;
-   OutputBoth.B19 = EEpDat >> 2;
-   OutputBoth.B20 = EEpDat >> 3;
-   OutputBoth.B21 = EEpDat >> 4;
-   OutputBoth.B22 = EEpDat >> 5;
-   OutputBoth.B23 = EEpDat >> 6;
-   OutputBoth.B24 = EEpDat >> 7;
-*/
 
    /////////////////////////////////////////////////
 
@@ -3111,19 +2802,7 @@ void Read_Config(void)
    AlarmIndicator.B14 = EEpDat >> 5;
    AlarmIndicator.B15 = EEpDat >> 6;
    AlarmIndicator.B16 = EEpDat >> 7;
-/*  
-   EEpDat = read_eeprom(0x0F);   // AlarmIndicator 9-16
-   Alarm_Indicator17_24 = EEpDat;
 
-   AlarmIndicator.B17 = EEpDat;
-   AlarmIndicator.B18 = EEpDat >> 1;
-   AlarmIndicator.B19 = EEpDat >> 2;
-   AlarmIndicator.B20 = EEpDat >> 3;
-   AlarmIndicator.B21 = EEpDat >> 4;
-   AlarmIndicator.B22 = EEpDat >> 5;
-   AlarmIndicator.B23 = EEpDat >> 6;
-   AlarmIndicator.B24 = EEpDat >> 7;
-*/
    //////////////////////////////////////////////////
    EEpDat = read_eeprom(0x10);
    //Red1_8 = EEpDat;
@@ -3149,13 +2828,7 @@ void Read_Config(void)
    RED_Colour.B14 = EEpDat >> 3;
    RED_Colour.B15 = EEpDat >> 4;
    RED_Colour.B16 = EEpDat >> 5;
-   //RED_Colour.B17 = EEpDat >> 6;
-   //RED_Colour.B18 = EEpDat >> 7;
-   
-   //EEpDat = read_eeprom(0x13);
-   //RED_Colour.B19 = EEpDat;
-   //RED_Colour.B20 = EEpDat >> 1;
-   
+
    
    EEpDat = read_eeprom(0x14);
    //Green1_8 = EEpDat;
@@ -3182,14 +2855,8 @@ void Read_Config(void)
    GREEN_Colour.B14 = EEpDat >> 3;
    GREEN_Colour.B15 = EEpDat >> 4;
    GREEN_Colour.B16 = EEpDat >> 5;
-   //GREEN_Colour.B17 = EEpDat >> 6;
-   //GREEN_Colour.B18 = EEpDat >> 7;
-   
-   //EEpDat = read_eeprom(0x17);
-   //GREEN_Colour.B19 = EEpDat;
-   //GREEN_Colour.B20 = EEpDat >> 1;
-  
-   //////////////////////////////////////////////////
+
+    //////////////////////////////////////////////////
 
    AutoAck = read_eeprom(0x18);          // Auto Acknoeledge
    AutoAckTime = read_eeprom(0x19);      // Auto Acknoeledge Time
@@ -3221,10 +2888,342 @@ void Read_Config(void)
    FaultDelayTime[19] = read_eeprom(0x30);
    FaultDelayTime[20] = read_eeprom(0x31);
    
-   //BuadRate = read_eeprom(0x61);         //Buad Rate
-   //NoOfbit = read_eeprom(0x62);
-   //Parity = read_eeprom(0x63);
-   //Stopbit = read_eeprom(0x64);
+      unsigned int  a = 0; 
+   unsigned char  phonenum;
+   for(; ; a++)
+   {
+      restart_wdt();
+      phonenum = read_eeprom(0x32 + a);
+      if((phonenum == 0x0D) || (a > 15))
+      {
+         sms_phonenumber[a] =  '\0';
+         write_eeprom(0x32+a,phonenum);
+         break;
+      }
+      else
+      {
+         sms_phonenumber[a] = phonenum;
+      }
+   }
+   
+      
+   int16  i =3,j=0,k=0 , buff;
+   for(; ; i++,j++)
+   {
+      restart_wdt();
+      buff = read_eeprom(0x5D+i);
+      
+      if((buff == 0x0D)|| (j>30))
+      {
+         SMS_Massage1[j] = '\0' ; // end string
+         break;
+      }
+      else
+      {
+         SMS_Massage1[j] = buff;  
+      }
+   }
+   
+   i++;
+   j=0;
+   
+   for(; ; i++,j++)
+   {
+      restart_wdt();
+      buff = read_eeprom(0x5D+i);
+      
+      if((buff == 0x0D) || (j>30))
+      {
+         SMS_Massage2[j] = '\0' ; // end string
+         break;
+      }
+      else
+      {
+         SMS_Massage2[j] = buff;
+         
+      }
+   }
+   
+   i++;
+   j=0;
+   
+   for(; ; i++,j++)
+   {
+      restart_wdt();
+      buff = read_eeprom(0x5D+i);
+      
+      if((buff == 0x0D) || (j>30))
+      {
+         SMS_Massage3[j] = '\0' ; // end string
+         break;
+      }
+      else
+      {
+         SMS_Massage3[j] = buff;
+         
+      }
+   }
+   
+   i++;
+   j=0;
+   
+   for(; ; i++,j++)
+   {
+      restart_wdt();
+      buff = read_eeprom(0x5D+i);
+      
+      if((buff == 0x0D) || (j>30))
+      {
+         SMS_Massage4[j] = '\0' ; // end string
+         break;
+      }
+      else
+      {
+         SMS_Massage4[j] = buff;
+         
+      }
+   }
+   
+   i++;
+   j=0;
+   
+   for(; ; i++,j++)
+   {
+      restart_wdt();
+      buff = read_eeprom(0x5D+i);
+      
+      if((buff == 0x0D) || (j>30))
+      {
+         SMS_Massage5[j] = '\0' ; // end string
+         break;
+      }
+      else
+      {
+         SMS_Massage5[j] = buff;
+         
+      }
+   }
+   
+   i++;
+   j=0;
+   
+   for(; ; i++,j++)
+   {
+      restart_wdt();
+      buff = read_eeprom(0x5D+i);
+      
+      if((buff == 0x0D) || (j>30))
+      {
+         SMS_Massage6[j] = '\0' ; // end string
+         break;
+      }
+      else
+      {
+         SMS_Massage6[j] = buff;
+         
+      }
+   }
+   
+   i++;
+   j=0;
+   
+   for(; ; i++,j++)
+   {
+      restart_wdt();
+      buff = read_eeprom(0x5D+i);
+      
+      if((buff == 0x0D) || (j>30))
+      {
+         SMS_Massage7[j] = '\0' ; // end string
+         break;
+      }
+      else
+      {
+         SMS_Massage7[j] = buff;
+         
+      }
+   }
+   
+   i++;
+   j=0;
+   
+   for(; ; i++,j++)
+   {
+      restart_wdt();
+      buff = read_eeprom(0x5D+i);
+      
+      if((buff == 0x0D) || (j>30))
+      {
+         SMS_Massage8[j] = '\0' ; // end string
+         break;
+      }
+      else
+      {
+         SMS_Massage8[j] = buff;
+         
+      }
+   }
+   
+   i++;
+   j=0;
+   
+   for(; ; i++,j++)
+   {
+      restart_wdt();
+      buff = read_eeprom(0x5D+i);
+      
+      if((buff == 0x0D) || (j>30))
+      {
+         SMS_Massage9[j] = '\0' ; // end string
+         break;
+      }
+      else
+      {
+         SMS_Massage9[j] = buff;
+         
+      }
+   }
+   
+   i++;
+   j=0;
+   
+   for(; ; i++,j++)
+   {
+      restart_wdt();
+      buff = read_eeprom(0x5D+i);
+      
+      if((buff == 0x0D) || (j>30))
+      {
+         SMS_Massage10[j] = '\0' ; // end string
+         break;
+      }
+      else
+      {
+         SMS_Massage10[j] = buff;
+         
+      }
+   }
+      
+   i++;
+   j=0;
+   
+   for(; ; i++,j++)
+   {
+      restart_wdt();
+      buff = read_eeprom(0x5D+i);
+      
+      if((buff == 0x0D) || (j>30))
+      {
+         SMS_Massage11[j] = '\0' ; // end string
+         break;
+      }
+      else
+      {
+         SMS_Massage11[j] = buff;
+         
+      }
+   }
+      
+   i++;
+   j=0;
+   
+   for(; ; i++,j++)
+   {
+      restart_wdt();
+      buff = read_eeprom(0x5D+i);
+      
+      if((buff == 0x0D) || (j>30))
+      {
+         SMS_Massage12[j] = '\0' ; // end string
+         break;
+      }
+      else
+      {
+         SMS_Massage12[j] = buff;
+         
+      }
+   }
+      
+   i++;
+   j=0;
+   
+   for(; ; i++,j++)
+   {
+      restart_wdt();
+      buff = read_eeprom(0x5D+i);
+      
+      if((buff == 0x0D) || (j>30))
+      {
+         SMS_Massage13[j] = '\0' ; // end string
+         break;
+      }
+      else
+      {
+         SMS_Massage13[j] = buff;
+         
+      }
+   }
+      
+   i++;
+   j=0;
+   
+   for(; ; i++,j++)
+   {
+      restart_wdt();
+      buff = read_eeprom(0x5D+i);
+      
+      if((buff == 0x0D) || (j>30))
+      {
+         SMS_Massage14[j] = '\0' ; // end string
+         break;
+      }
+      else
+      {
+         SMS_Massage14[j] = buff;
+         
+      }
+   }
+      
+   i++;
+   j=0;
+   
+   for(; ; i++,j++)
+   {
+      restart_wdt();
+      buff = read_eeprom(0x5D+i);
+      
+      if((buff == 0x0D) || (j>30))
+      {
+         SMS_Massage15[j] = '\0' ; // end string
+         break;
+      }
+      else
+      {
+         SMS_Massage15[j] = buff;
+         
+      }
+   }
+      
+   i++;
+   j=0;
+   
+   for(; ; i++,j++)
+   {
+      restart_wdt();
+      buff = read_eeprom(0x5D+i);
+      
+      if((buff == 0x0D) || (j>30))
+      {
+         SMS_Massage16[j] = '\0' ; // end string
+         break;
+      }
+      else
+      {
+         SMS_Massage16[j] = buff;
+         
+      }
+   }
+   
 }
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -3394,6 +3393,25 @@ void Anal_Function(void)
                   else output_bit(Pbell,1);                          //Bell
                }
             }
+            // SMS Sending 
+            if((SendSMS.B1 ==0) && (functointest_f ==0) && (Ack.B1 ==0))
+            {
+               fprintf(CH2,"AT+CMGF=1"); 
+               putc('\n',CH2);
+               delay_ms(10);
+            
+               SendSMS.B1 =1;
+               fprintf(CH2,"AT+CMGS=\"");
+               fprintf(CH2,sms_phonenumber);
+               
+               fprintf(CH2,"\"");
+               putc('\n',CH2);
+               delay_ms(50);
+              
+              fprintf(CH2,SMS_Massage1);
+              putc('\n',CH2);
+              putc(26,CH2);
+            }
         }
       }
       else if(FaultType.B1 == 1) Ack.B1 = 0;
@@ -3403,10 +3421,32 @@ void Anal_Function(void)
       if((Inputt.B1 ^ InputType.B1) == 1)
       {
          Output.B1 = 0;
+         // SMS Sending 
+         if((SendSMS.B1 ==0) && (functointest_f ==0) && (Ack.B1 ==0))
+         {
+            fprintf(CH2,"AT+CMGF=1"); 
+            putc('\n',CH2);
+            delay_ms(10);
+         
+            SendSMS.B1 =1;
+            fprintf(CH2,"AT+CMGS=\"");
+            fprintf(CH2,sms_phonenumber);
+            
+            fprintf(CH2,"\"");
+            putc('\n',CH2);
+            delay_ms(50);
+           
+           fprintf(CH2,SMS_Massage1);
+           putc('\n',CH2);
+           putc(26,CH2);
+         }
       }
       else
       {
          Output.B1 = 1;
+
+         SendSMS.B1 =0;
+         functointest_f =0;
       }
    }
 ///////////////////////////////////////////////////////////////////////////////
@@ -3447,6 +3487,25 @@ void Anal_Function(void)
                   else output_bit(Pbell,1);                          //Bell
                }
             }
+            // SMS Sending   
+            if((SendSMS.B2 ==0)&& (functointest_f ==0) && (Ack.B2 ==0))
+            {
+               fprintf(CH2,"AT+CMGF=1"); 
+               putc('\n',CH2);
+               delay_ms(10);
+                
+               SendSMS.B2 =1;
+               fprintf(CH2,"AT+CMGS=\"");
+               fprintf(CH2,sms_phonenumber);
+               
+               fprintf(CH2,"\"");
+               putc('\n',CH2);
+               delay_ms(50);
+               
+              fprintf(CH2,SMS_Massage2);
+              putc('\n',CH2);
+             putc(26,CH2);
+            }
           }
 
       }
@@ -3457,10 +3516,31 @@ void Anal_Function(void)
       if((Inputt.B2 ^ InputType.B2) == 1)
       {
          Output.B2 = 0;
+         // SMS Sending   
+            if((SendSMS.B2 ==0)&& (functointest_f ==0) && (Ack.B2 ==0))
+            {
+               fprintf(CH2,"AT+CMGF=1"); 
+               putc('\n',CH2);
+               delay_ms(10);
+                
+               SendSMS.B2 =1;
+               fprintf(CH2,"AT+CMGS=\"");
+               fprintf(CH2,sms_phonenumber);
+               
+               fprintf(CH2,"\"");
+               putc('\n',CH2);
+               delay_ms(50);
+               
+              fprintf(CH2,SMS_Massage2);
+              putc('\n',CH2);
+             putc(26,CH2);
+            } 
       }
       else
       {
          Output.B2 = 1;
+         SendSMS.B2 =0;
+         functointest_f =0;
       }
    }
 ///////////////////////////////////////////////////////////////////////////////
@@ -3501,6 +3581,25 @@ void Anal_Function(void)
                   else output_bit(Pbell,1);                          //Bell
                }
             }
+            // SMS Sending   
+            if((SendSMS.B3 ==0)&& (functointest_f ==0) && (Ack.B3 ==0))
+            {
+               fprintf(CH2,"AT+CMGF=1"); 
+               putc('\n',CH2);
+               delay_ms(10);
+               
+               SendSMS.B3 =1;
+               fprintf(CH2,"AT+CMGS=\"");
+               fprintf(CH2,sms_phonenumber);
+               
+               fprintf(CH2,"\"");
+               putc('\n',CH2);
+               delay_ms(50);
+              
+              fprintf(CH2,SMS_Massage3);
+              putc('\n',CH2);
+             putc(26,CH2);
+            }
           }
 
       }
@@ -3511,10 +3610,31 @@ void Anal_Function(void)
       if((Inputt.B3 ^ InputType.B3) == 1)
       {
          Output.B3 = 0;
+         // SMS Sending   
+            if((SendSMS.B3 ==0)&& (functointest_f ==0) && (Ack.B3 ==0))
+            {
+               fprintf(CH2,"AT+CMGF=1"); 
+               putc('\n',CH2);
+               delay_ms(10);
+               
+               SendSMS.B3 =1;
+               fprintf(CH2,"AT+CMGS=\"");
+               fprintf(CH2,sms_phonenumber);
+               
+               fprintf(CH2,"\"");
+               putc('\n',CH2);
+               delay_ms(50);
+              
+              fprintf(CH2,SMS_Massage3);
+              putc('\n',CH2);
+             putc(26,CH2);
+            }
       }
       else
       {
          Output.B3 = 1;
+         SendSMS.B3 =0;
+         functointest_f =0;
       }
    }
 ///////////////////////////////////////////////////////////////////////////////
@@ -3555,6 +3675,25 @@ void Anal_Function(void)
                   else output_bit(Pbell,1);                          //Bell
                }
             }
+            // SMS Sending   
+            if((SendSMS.B4 ==0)&& (functointest_f ==0) && (Ack.B4 ==0))
+            {
+               fprintf(CH2,"AT+CMGF=1"); 
+               putc('\n',CH2);
+               delay_ms(10);
+               
+               SendSMS.B4 =1;
+               fprintf(CH2,"AT+CMGS=\"");
+               fprintf(CH2,sms_phonenumber);
+            
+               fprintf(CH2,"\"");
+               putc('\n',CH2);
+               delay_ms(50);
+              
+              fprintf(CH2,SMS_Massage4);
+              putc('\n',CH2);
+             putc(26,CH2);
+            }
           }
 
       }
@@ -3565,10 +3704,31 @@ void Anal_Function(void)
       if((Inputt.B4 ^ InputType.B4) == 1)
       {
          Output.B4 = 0;
+         // SMS Sending   
+            if((SendSMS.B4 ==0)&& (functointest_f ==0) && (Ack.B4 ==0))
+            {
+               fprintf(CH2,"AT+CMGF=1"); 
+               putc('\n',CH2);
+               delay_ms(10);
+               
+               SendSMS.B4 =1;
+               fprintf(CH2,"AT+CMGS=\"");
+               fprintf(CH2,sms_phonenumber);
+            
+               fprintf(CH2,"\"");
+               putc('\n',CH2);
+               delay_ms(50);
+              
+              fprintf(CH2,SMS_Massage4);
+              putc('\n',CH2);
+             putc(26,CH2);
+            }
       }
       else
       {
          Output.B4 = 1;
+         SendSMS.B4 =0;
+         functointest_f =0;
       }
    }
 ///////////////////////////////////////////////////////////////////////////////
@@ -7347,7 +7507,7 @@ void main()
       Anal_Function(); restart_wdt();
       Send_Ouput(); restart_wdt();
       
-      Driver595(); restart_wdt();
+      //Driver595(); restart_wdt();
       
       
       output_toggle(PIN_A0);
