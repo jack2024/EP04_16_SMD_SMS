@@ -1,24 +1,24 @@
 
-ROM used:   38644/65536 (59%)
-            38644/65536 (59%) including unused fragments
+ROM used:   45036/65536 (69%)
+            45036/65536 (69%) including unused fragments
 
-            4.0 Average locations per line
-            9.0 Average locations per statement
+            4.6 Average locations per line
+            9.3 Average locations per statement
 
-RAM used:   3100/3896 (80%) at main() level
-            3124/3896 (80%) worst case
+RAM used:   3103/3896 (80%) at main() level
+            3125/3896 (80%) worst case
 
 Stack used: 4 worst case (3 in main + 1 for interrupts)
 Stack size: 31
 
 Lines Stmts  %   Files
 ----- ----- ---  -----
- 7573  4167  97  ESPAN-04.c
+ 7751  4745  98  ESPAN-04.c
    65     0   0  ..\ESPAN04_20 - Delay - SP - SMD - PIC18F252\ESPAN-04.h
  1022     0   0  C:\Program Files (x86)\PICC\Devices\18F26K22.h
- 1032   110   3  ..\ESPAN04_20 - Delay - SP - SMD - PIC18F252\23S17.c
+ 1032   110   2  ..\ESPAN04_20 - Delay - SP - SMD - PIC18F252\23S17.c
 ----- -----
- 9692  4277 Total
+ 9870  4855 Total
 
 Page ROM  %  RAM    Vol Diff  Functions:
 ---- --- --- ---    --- ----  ----------
@@ -42,21 +42,21 @@ Page ROM  %  RAM    Vol Diff  Functions:
 0     86   0    5    357  6.6  CRC
 0    846   1    2   6885  5.5  Alarmtosend
 0    656   1    2   3150  6.4  checkCommand
-0  10940  14   12  60947 11.0  Modbus_Function
+0  10940  12   12  60947 11.0  Modbus_Function
 0   2384   3    9  13242 11.5  Read_input
 0     34   0    5             @MUL1616
-0     58   0    0             @goto7081
-0     58   0    0             @goto7120
-0     58   0    0             @goto7167
-0     58   0    0             @goto7206
-0   5284   7   13  23002  8.5  Read_Config
+0     58   0    0             @goto36258
+0     58   0    0             @goto36298
+0     58   0    0             @goto36344
+0     58   0    0             @goto36384
+0   5284   6   13  23002  8.5  Read_Config
 0     16   0    0     35  1.6  RDA_isr
 0    146   0    1   1334  5.9  TIMER2_isr
-0   8772  11   16 111004  6.5  Anal_Function
+0  14344  16   16 159107  6.5  Anal_Function
 0     10   0    0  15644  5.0  @const1066
 0     32   0    2   1481  5.9  @PSTRINGC_826
 0     10   0    0   6054  5.5  @const1071
-0     36   0    2   3485  5.4  @PSTRINGR_826
+0     38   0    2   3485  5.4  @PSTRINGR_826
 0     10   0    0  21568 10.0  @const1074
 0     10   0    0             @const1075
 0     10   0    0  15644  5.0  @const1077
@@ -71,35 +71,100 @@ Page ROM  %  RAM    Vol Diff  Functions:
 0     10   0    0             @const1090
 0     10   0    0             @const1092
 0     10   0    0             @const1093
+0     10   0    0  15644  5.0  @const1095
+0     10   0    0   2829  4.4  @const1096
+0     10   0    0   6054  5.5  @const1098
+0     10   0    0   3485  5.4  @const1099
+0     10   0    0  21568 10.0  @const1101
+0     10   0    0             @const1102
+0     10   0    0             @const1104
+0     10   0    0             @const1105
+0     10   0    0             @const1107
+0     10   0    0             @const1108
+0     10   0    0             @const1110
+0     10   0    0             @const1111
+0     10   0    0             @const1113
+0     10   0    0             @const1114
+0     10   0    0             @const1116
+0     10   0    0             @const1117
+0     10   0    0             @const1119
+0     10   0    0             @const1120
+0     10   0    0             @const1122
+0     10   0    0             @const1123
+0     10   0    0             @const1125
+0     10   0    0             @const1126
+0     10   0    0             @const1128
+0     10   0    0             @const1129
+0     10   0    0             @const1131
+0     10   0    0             @const1132
+0     10   0    0             @const1134
+0     10   0    0             @const1135
+0     10   0    0             @const1137
+0     10   0    0             @const1138
+0     10   0    0             @const1140
+0     10   0    0             @const1141
+0     10   0    0             @const1143
+0     10   0    0             @const1144
+0     10   0    0             @const1146
+0     10   0    0             @const1147
+0     10   0    0             @const1149
+0     10   0    0             @const1150
+0     10   0    0             @const1152
+0     10   0    0             @const1153
+0     10   0    0             @const1155
+0     10   0    0             @const1156
+0     10   0    0             @const1158
+0     10   0    0             @const1159
+0     10   0    0             @const1161
+0     10   0    0             @const1162
+0     10   0    0             @const1164
+0     10   0    0             @const1165
+0     10   0    0  15644  5.0  @const1168
+0     10   0    0   1481  5.9  @const1170
+0     10   0    0   3485  5.4  @const1172
+0     10   0    0  21568 10.0  @const1174
+0     10   0    0             @const1176
+0     10   0    0             @const1178
+0     10   0    0             @const1180
+0     10   0    0             @const1182
+0     10   0    0             @const1184
+0     10   0    0             @const1186
+0     10   0    0             @const1188
+0     10   0    0             @const1190
+0     10   0    0             @const1192
+0     10   0    0             @const1194
+0     10   0    0             @const1196
+0     10   0    0             @const1198
 0    938   1    1  15644  5.0  Send_Ouput
 0    218   0    0   2829  4.4  ForceAllAlarm
 0    252   0   11   1481  5.9  check_test
 0    334   0    3   6054  5.5  check_ack
 0    706   1    3   3485  5.4  check_reset
 0   2568   3    7   8067  6.0  CheckAutoReset
-0   2428   3    4  21568 10.0  MAIN
-0     58   0    0             @goto14435
-0     58   0    0             @goto14464
+0   2596   3    7  23283 11.0  MAIN
+0     58   0    0             @goto44511
+0     58   0    0             @goto44537
+0     10   0    0             @const1210
  Inline         0             @cinit1
 
 Program metrics:
-    Functions               36
-    Statements              4277
-    Comments                3100
-    Volume (V)              523223
-    Difficulty (D)          192.8
-    Effort to implement (E) 100860161
-    Time to implement (T)   1556 hours, 29 minutes
-    Est Delivered Bugs (B)  72
-    Cyclomatic Complexity   1083
-    Maintainability (MI)    85
+    Functions               45
+    Statements              4855
+    Comments                2579
+    Volume (V)              735638
+    Difficulty (D)          250.0
+    Effort to implement (E) 183935067
+    Time to implement (T)   2838 hours, 30 minutes
+    Est Delivered Bugs (B)  108
+    Cyclomatic Complexity   1398
+    Maintainability (MI)    0
 
  Segment     Used  Free
 -----------  ----  ----
 00000-00002     4  0  
 00004-00006     0  4  
 00008-000B8   178  0  
-000BA-0FFFE  38462  26888  
+000BA-0FFFE  44854  20496  
 
 
 

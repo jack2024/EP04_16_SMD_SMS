@@ -3769,6 +3769,25 @@ void Anal_Function(void)
                   else output_bit(Pbell,1);                          //Bell
                }
             }
+            // SMS Sending   
+            if((SendSMS.B5 ==0)&& (functointest_f ==0) && (Ack.B5 ==0))
+            {
+               fprintf(CH2,"AT+CMGF=1"); 
+               putc('\n',CH2);
+               delay_ms(10);
+               
+               SendSMS.B5 =1;
+               fprintf(CH2,"AT+CMGS=\"");
+               fprintf(CH2,sms_phonenumber);
+               
+               fprintf(CH2,"\"");
+               putc('\n',CH2);
+               delay_ms(50);
+              
+              fprintf(CH2,SMS_Massage5);
+              putc('\n',CH2);
+             putc(26,CH2);
+            }
           }
 
       }
@@ -3779,10 +3798,32 @@ void Anal_Function(void)
       if((Inputt.B5 ^ InputType.B5) == 1)
       {
          Output.B5 = 0;
+         // SMS Sending   
+            if((SendSMS.B5 ==0)&& (functointest_f ==0) && (Ack.B5 ==0))
+            {
+               fprintf(CH2,"AT+CMGF=1"); 
+               putc('\n',CH2);
+               delay_ms(10);
+               
+               SendSMS.B5 =1;
+               fprintf(CH2,"AT+CMGS=\"");
+               fprintf(CH2,sms_phonenumber);
+               
+               fprintf(CH2,"\"");
+               putc('\n',CH2);
+               delay_ms(50);
+              
+              fprintf(CH2,SMS_Massage5);
+              putc('\n',CH2);
+             putc(26,CH2);
+            }
       }
       else
       {
          Output.B5 = 1;
+         Output.B5 = 1;
+         SendSMS.B5 =0;
+         functointest_f =0;
       }
    }
 ///////////////////////////////////////////////////////////////////////////////
@@ -3823,6 +3864,25 @@ void Anal_Function(void)
                   else output_bit(Pbell,1);                          //Bell
                }
             }
+            // SMS Sending   
+            if((SendSMS.B6 ==0)&& (functointest_f ==0) && (Ack.B6 ==0))
+            {
+               fprintf(CH2,"AT+CMGF=1"); 
+               putc('\n',CH2);
+               delay_ms(10);
+               
+               SendSMS.B6 =1;
+               fprintf(CH2,"AT+CMGS=\"");
+               fprintf(CH2,sms_phonenumber);
+               
+               fprintf(CH2,"\"");
+               putc('\n',CH2);
+               delay_ms(50);
+              
+              fprintf(CH2,SMS_Massage6);
+              putc('\n',CH2);
+             putc(26,CH2);
+            }
           }
 
       }
@@ -3833,10 +3893,31 @@ void Anal_Function(void)
       if((Inputt.B6 ^ InputType.B6) == 1)
       {
          Output.B6 = 0;
+         // SMS Sending   
+            if((SendSMS.B6 ==0)&& (functointest_f ==0) && (Ack.B6 ==0))
+            {
+               fprintf(CH2,"AT+CMGF=1"); 
+               putc('\n',CH2);
+               delay_ms(10);
+               
+               SendSMS.B6 =1;
+               fprintf(CH2,"AT+CMGS=\"");
+               fprintf(CH2,sms_phonenumber);
+               
+               fprintf(CH2,"\"");
+               putc('\n',CH2);
+               delay_ms(50);
+              
+              fprintf(CH2,SMS_Massage6);
+              putc('\n',CH2);
+             putc(26,CH2);
+            }
       }
       else
       {
          Output.B6 = 1;
+         SendSMS.B6 =0;
+         functointest_f =0;
       }
    }
 ///////////////////////////////////////////////////////////////////////////////
@@ -3877,6 +3958,25 @@ void Anal_Function(void)
                   else output_bit(Pbell,1);                          //Bell
                }
             }
+            // SMS Sending   
+            if((SendSMS.B7 ==0)&& (functointest_f ==0) && (Ack.B7 ==0))
+            {
+               fprintf(CH2,"AT+CMGF=1"); 
+               putc('\n',CH2);
+               delay_ms(10);
+               
+               SendSMS.B7 =1;
+               fprintf(CH2,"AT+CMGS=\"");
+               fprintf(CH2,sms_phonenumber);
+               
+               fprintf(CH2,"\"");
+               putc('\n',CH2);
+               delay_ms(50);
+              
+              fprintf(CH2,SMS_Massage7);  
+              putc('\n',CH2);
+             putc(26,CH2);
+            }
           }
 
       }
@@ -3887,10 +3987,31 @@ void Anal_Function(void)
       if((Inputt.B7 ^ InputType.B7) == 1)
       {
          Output.B7 = 0;
+         // SMS Sending   
+            if((SendSMS.B7 ==0)&& (functointest_f ==0) && (Ack.B7 ==0))
+            {
+               fprintf(CH2,"AT+CMGF=1"); 
+               putc('\n',CH2);
+               delay_ms(10);
+               
+               SendSMS.B7 =1;
+               fprintf(CH2,"AT+CMGS=\"");
+               fprintf(CH2,sms_phonenumber);
+               
+               fprintf(CH2,"\"");
+               putc('\n',CH2);
+               delay_ms(50);
+              
+              fprintf(CH2,SMS_Massage7);  
+              putc('\n',CH2);
+             putc(26,CH2);
+            }
       }
       else
       {
          Output.B7 = 1;
+         SendSMS.B7 =0;
+         functointest_f =0;
       }
    }
 ///////////////////////////////////////////////////////////////////////////////
@@ -3931,6 +4052,25 @@ void Anal_Function(void)
                   else output_bit(Pbell,1);                          //Bell
                }
             }
+               // SMS Sending   
+         if((SendSMS.B8 ==0)&& (functointest_f ==0) && (Ack.B8 ==0))
+         {
+            fprintf(CH2,"AT+CMGF=1"); 
+            putc('\n',CH2);
+            delay_ms(10);
+            
+            SendSMS.B8 =1;
+            fprintf(CH2,"AT+CMGS=\"");
+            fprintf(CH2,sms_phonenumber);
+            
+            fprintf(CH2,"\"");
+            putc('\n',CH2);
+            delay_ms(50);
+           
+           printf(SMS_Massage8);  
+           putc('\n',CH2);
+          putc(26,CH2);
+         }
        }
 
       }
@@ -3941,10 +4081,31 @@ void Anal_Function(void)
       if((Inputt.B8 ^ InputType.B8) == 1)
       {
          Output.B8 = 0;
+         // SMS Sending   
+         if((SendSMS.B8 ==0)&& (functointest_f ==0) && (Ack.B8 ==0))
+         {
+            fprintf(CH2,"AT+CMGF=1"); 
+            putc('\n',CH2);
+            delay_ms(10);
+            
+            SendSMS.B8 =1;
+            fprintf(CH2,"AT+CMGS=\"");
+            fprintf(CH2,sms_phonenumber);
+            
+            fprintf(CH2,"\"");
+            putc('\n',CH2);
+            delay_ms(50);
+           
+           printf(SMS_Massage8);  
+           putc('\n',CH2);
+          putc(26,CH2);
+         }
       }
       else
       {
          Output.B8 = 1;
+         SendSMS.B8 =0;
+         functointest_f =0;
       }
    }
 ///////////////////////////////////////////////////////////////////////////////
@@ -3985,6 +4146,25 @@ void Anal_Function(void)
                   else output_bit(Pbell,1);                          //Bell
                }
             }
+            // SMS Sending   
+            if((SendSMS.B9 ==0)&& (functointest_f ==0) && (Ack.B9 ==0))
+            {
+               fprintf(CH2,"AT+CMGF=1"); 
+               putc('\n',CH2);
+               delay_ms(10);
+               
+               SendSMS.B9 =1;
+               fprintf(CH2,"AT+CMGS=\"");
+               fprintf(CH2,sms_phonenumber);
+               
+               fprintf(CH2,"\"");
+               putc('\n',CH2);
+               delay_ms(50);
+              
+              printf(SMS_Massage9);  
+              putc('\n',CH2);
+              putc(26,CH2);
+            }
           }
 
       }
@@ -3995,10 +4175,31 @@ void Anal_Function(void)
       if((Inputt.B9 ^ InputType.B9) == 1)
       {
          Output.B9 = 0;
+         // SMS Sending   
+         if((SendSMS.B9 ==0)&& (functointest_f ==0) && (Ack.B9 ==0))
+         {
+            fprintf(CH2,"AT+CMGF=1"); 
+            putc('\n',CH2);
+            delay_ms(10);
+            
+            SendSMS.B9 =1;
+            fprintf(CH2,"AT+CMGS=\"");
+            fprintf(CH2,sms_phonenumber);
+            
+            fprintf(CH2,"\"");
+            putc('\n',CH2);
+            delay_ms(50);
+           
+           printf(SMS_Massage9);  
+           putc('\n',CH2);
+           putc(26,CH2);
+         }
       }
       else
       {
          Output.B9 = 1;
+         SendSMS.B9 =0;
+         functointest_f =0;
       }
    }
 ///////////////////////////////////////////////////////////////////////////////
@@ -4039,6 +4240,25 @@ void Anal_Function(void)
                   else output_bit(Pbell,1);                          //Bell
                }
             }
+            // SMS Sending   
+            if((SendSMS.B10 ==0)&& (functointest_f ==0) && (Ack.B10 ==0))
+            {
+               fprintf(CH2,"AT+CMGF=1"); 
+               putc('\n',CH2);
+               delay_ms(10);
+               
+               SendSMS.B10 =1;
+               fprintf(CH2,"AT+CMGS=\"");
+               fprintf(CH2,sms_phonenumber);
+               
+               fprintf(CH2,"\"");
+               putc('\n',CH2);
+               delay_ms(50);
+              
+              printf(SMS_Massage10);  
+              putc('\n',CH2);
+              putc(26,CH2);
+            }
           }
 
       }
@@ -4049,10 +4269,31 @@ void Anal_Function(void)
       if((Inputt.B10 ^ InputType.B10) == 1)
       {
          Output.B10 = 0;
+         // SMS Sending   
+         if((SendSMS.B10 ==0)&& (functointest_f ==0) && (Ack.B10 ==0))
+         {
+            fprintf(CH2,"AT+CMGF=1"); 
+            putc('\n',CH2);
+            delay_ms(10);
+            
+            SendSMS.B10 =1;
+            fprintf(CH2,"AT+CMGS=\"");
+            fprintf(CH2,sms_phonenumber);
+            
+            fprintf(CH2,"\"");
+            putc('\n',CH2);
+            delay_ms(50);
+           
+           printf(SMS_Massage10);  
+           putc('\n',CH2);
+           putc(26,CH2);
+         }
       }
       else
       {
          Output.B10 = 1;
+         SendSMS.B10 =0;
+         functointest_f =0;
       }
    }
 //}
@@ -4098,6 +4339,26 @@ void Anal_Function(void)
                   else output_bit(Pbell,1);                          //Bell
                }
             }
+            // SMS Sending   
+            if((SendSMS.B11 ==0)&& (functointest_f ==0) && (Ack.B11 ==0))
+            {
+               fprintf(CH2,"AT+CMGF=1"); 
+               putc('\n',CH2);
+               delay_ms(10);
+               
+               SendSMS.B11 =1;
+               fprintf(CH2,"AT+CMGS=\"");
+               fprintf(CH2,sms_phonenumber);
+               
+               fprintf(CH2,"\"");
+               putc('\n',CH2);
+               delay_ms(50);
+              
+              printf(SMS_Massage11);  
+              putc('\n',CH2);
+              putc(26,CH2);
+            }
+            ///////////////////////////////////
           }
 
       }
@@ -4108,10 +4369,32 @@ void Anal_Function(void)
       if((Inputt.B11 ^ InputType.B11) == 1)
       {
          Output.B11 = 0;
+         // SMS Sending   
+            if((SendSMS.B11 ==0)&& (functointest_f ==0) && (Ack.B11 ==0))
+            {
+               fprintf(CH2,"AT+CMGF=1"); 
+               putc('\n',CH2);
+               delay_ms(10);
+               
+               SendSMS.B11 =1;
+               fprintf(CH2,"AT+CMGS=\"");
+               fprintf(CH2,sms_phonenumber);
+               
+               fprintf(CH2,"\"");
+               putc('\n',CH2);
+               delay_ms(50);
+              
+              printf(SMS_Massage11);  
+              putc('\n',CH2);
+              putc(26,CH2);
+            }
+            ///////////////////////////////////
       }
       else
       {
          Output.B11 = 1;
+         SendSMS.B11 =0;
+         functointest_f =0;
       }
    }
 ///////////////////////////////////////////////////////////////////////////////
@@ -4152,6 +4435,26 @@ void Anal_Function(void)
                   else output_bit(Pbell,1);                          //Bell
                }
             }
+            // SMS Sending   
+            if((SendSMS.B12 ==0)&& (functointest_f ==0) && (Ack.B12 ==0))
+            {
+               fprintf(CH2,"AT+CMGF=1"); 
+               putc('\n',CH2);
+               delay_ms(10);
+               
+               SendSMS.B12 =1;
+               fprintf(CH2,"AT+CMGS=\"");
+               fprintf(CH2,sms_phonenumber);
+               
+               fprintf(CH2,"\"");
+               putc('\n',CH2);
+               delay_ms(50);
+              
+              printf(SMS_Massage12);  
+              putc('\n',CH2);
+              putc(26,CH2);
+            }
+            ///////////////////////////////////
         }
 
       }
@@ -4162,10 +4465,32 @@ void Anal_Function(void)
       if((Inputt.B12 ^ InputType.B12) == 1)
       {
          Output.B12 = 0;
+         // SMS Sending   
+            if((SendSMS.B12 ==0)&& (functointest_f ==0) && (Ack.B12 ==0))
+            {
+               fprintf(CH2,"AT+CMGF=1"); 
+               putc('\n',CH2);
+               delay_ms(10);
+               
+               SendSMS.B12 =1;
+               fprintf(CH2,"AT+CMGS=\"");
+               fprintf(CH2,sms_phonenumber);
+               
+               fprintf(CH2,"\"");
+               putc('\n',CH2);
+               delay_ms(50);
+              
+              printf(SMS_Massage12);  
+              putc('\n',CH2);
+              putc(26,CH2);
+            }
+            ///////////////////////////////////
       }
       else
       {
          Output.B12 = 1;
+         SendSMS.B12 =0;
+         functointest_f =0;
       }
    }
 ///////////////////////////////////////////////////////////////////////////////
@@ -4206,6 +4531,26 @@ void Anal_Function(void)
                   else output_bit(Pbell,1);                          //Bell
                }
             }
+            // SMS Sending   
+            if((SendSMS.B13 ==0)&& (functointest_f ==0) && (Ack.B13 ==0))
+            {
+               fprintf(CH2,"AT+CMGF=1"); 
+               putc('\n',CH2);
+               delay_ms(10);
+               
+               SendSMS.B13 =1;
+               fprintf(CH2,"AT+CMGS=\"");
+               fprintf(CH2,sms_phonenumber);
+               
+               fprintf(CH2,"\"");
+               putc('\n',CH2);
+               delay_ms(50);
+              
+              printf(SMS_Massage13);  
+              putc('\n',CH2);
+              putc(26,CH2);
+            }
+            ///////////////////////////////////
           }
 
       }
@@ -4216,10 +4561,32 @@ void Anal_Function(void)
       if((Inputt.B13 ^ InputType.B13) == 1)
       {
          Output.B13 = 0;
+         // SMS Sending   
+            if((SendSMS.B13 ==0)&& (functointest_f ==0) && (Ack.B13 ==0))
+            {
+               fprintf(CH2,"AT+CMGF=1"); 
+               putc('\n',CH2);
+               delay_ms(10);
+               
+               SendSMS.B13 =1;
+               fprintf(CH2,"AT+CMGS=\"");
+               fprintf(CH2,sms_phonenumber);
+               
+               fprintf(CH2,"\"");
+               putc('\n',CH2);
+               delay_ms(50);
+              
+              printf(SMS_Massage13);  
+              putc('\n',CH2);
+              putc(26,CH2);
+            }
+            ///////////////////////////////////
       }
       else
       {
          Output.B13 = 1;
+         SendSMS.B13 =0;
+         functointest_f =0;
       }
    }
 ///////////////////////////////////////////////////////////////////////////////
@@ -4260,6 +4627,26 @@ void Anal_Function(void)
                   else output_bit(Pbell,1);                          //Bell
                }
             }
+            // SMS Sending   
+            if((SendSMS.B14 ==0)&& (functointest_f ==0) && (Ack.B14 ==0))
+            {
+               fprintf(CH2,"AT+CMGF=1"); 
+               putc('\n',CH2);
+               delay_ms(10);
+               
+               SendSMS.B14 =1;
+               fprintf(CH2,"AT+CMGS=\"");
+               fprintf(CH2,sms_phonenumber);
+               
+               fprintf(CH2,"\"");
+               putc('\n',CH2);
+               delay_ms(50);
+              
+              printf(SMS_Massage14);  
+              putc('\n',CH2);
+              putc(26,CH2);
+            }
+            ///////////////////////////////////
           }
 
       }
@@ -4270,10 +4657,32 @@ void Anal_Function(void)
       if((Inputt.B14 ^ InputType.B14) == 1)
       {
          Output.B14 = 0;
+         // SMS Sending   
+            if((SendSMS.B14 ==0)&& (functointest_f ==0) && (Ack.B14 ==0))
+            {
+               fprintf(CH2,"AT+CMGF=1"); 
+               putc('\n',CH2);
+               delay_ms(10);
+               
+               SendSMS.B14 =1;
+               fprintf(CH2,"AT+CMGS=\"");
+               fprintf(CH2,sms_phonenumber);
+               
+               fprintf(CH2,"\"");
+               putc('\n',CH2);
+               delay_ms(50);
+              
+              printf(SMS_Massage14);  
+              putc('\n',CH2);
+              putc(26,CH2);
+            }
+            ///////////////////////////////////
       }
       else
       {
          Output.B14 = 1;
+         SendSMS.B14 =0;
+         functointest_f =0;
       }
    }
 ///////////////////////////////////////////////////////////////////////////////
@@ -4314,6 +4723,26 @@ void Anal_Function(void)
                   else output_bit(Pbell,1);                          //Bell
                }
             }
+            // SMS Sending   
+            if((SendSMS.B15 ==0)&& (functointest_f ==0) && (Ack.B15 ==0))
+            {
+               fprintf(CH2,"AT+CMGF=1"); 
+               putc('\n',CH2);
+               delay_ms(10);
+               
+               SendSMS.B15 =1;
+               fprintf(CH2,"AT+CMGS=\"");
+               fprintf(CH2,sms_phonenumber);
+               
+               fprintf(CH2,"\"");
+               putc('\n',CH2);
+               delay_ms(50);
+              
+              printf(SMS_Massage15);  
+              putc('\n',CH2);
+              putc(26,CH2);
+            }
+            ///////////////////////////////////
           }
 
       }
@@ -4324,10 +4753,32 @@ void Anal_Function(void)
       if((Inputt.B15 ^ InputType.B15) == 1)
       {
          Output.B15 = 0;
+         // SMS Sending   
+            if((SendSMS.B15 ==0)&& (functointest_f ==0) && (Ack.B15 ==0))
+            {
+               fprintf(CH2,"AT+CMGF=1"); 
+               putc('\n',CH2);
+               delay_ms(10);
+               
+               SendSMS.B15 =1;
+               fprintf(CH2,"AT+CMGS=\"");
+               fprintf(CH2,sms_phonenumber);
+               
+               fprintf(CH2,"\"");
+               putc('\n',CH2);
+               delay_ms(50);
+              
+              printf(SMS_Massage15);  
+              putc('\n',CH2);
+              putc(26,CH2);
+            }
+            ///////////////////////////////////
       }
       else
       {
          Output.B15 = 1;
+         SendSMS.B15 =0;
+         functointest_f =0;
       }
    }
 ///////////////////////////////////////////////////////////////////////////////
@@ -4369,6 +4820,26 @@ void Anal_Function(void)
                   else output_bit(Pbell,1);                          //Bell
                }
             }
+            // SMS Sending   
+            if((SendSMS.B16 ==0)&& (functointest_f ==0) && (Ack.B16 ==0))
+            {
+               fprintf(CH2,"AT+CMGF=1"); 
+               putc('\n',CH2);
+               delay_ms(10);
+               
+               SendSMS.B16 =1;
+               fprintf(CH2,"AT+CMGS=\"");
+               fprintf(CH2,sms_phonenumber);
+               
+               fprintf(CH2,"\"");
+               putc('\n',CH2);
+               delay_ms(50);
+              
+              printf(SMS_Massage16);  
+              putc('\n',CH2);
+              putc(26,CH2);
+            }
+            ///////////////////////////////////
           }
 
       }
@@ -4379,250 +4850,38 @@ void Anal_Function(void)
       if((Inputt.B16 ^ InputType.B16) == 1)
       {
          Output.B16 = 0;
+         // SMS Sending   
+            if((SendSMS.B16 ==0)&& (functointest_f ==0) && (Ack.B16 ==0))
+            {
+               fprintf(CH2,"AT+CMGF=1"); 
+               putc('\n',CH2);
+               delay_ms(10);
+               
+               SendSMS.B16 =1;
+               fprintf(CH2,"AT+CMGS=\"");
+               fprintf(CH2,sms_phonenumber);
+               
+               fprintf(CH2,"\"");
+               putc('\n',CH2);
+               delay_ms(50);
+              
+              printf(SMS_Massage16);  
+              putc('\n',CH2);
+              putc(26,CH2);
+            }
+            ///////////////////////////////////
       }
       else
       {
          Output.B16 = 1;
+         SendSMS.B16 =0;
+         functointest_f =0;
       }
    }
 //}
-/*
-///////////////////////////////////////////////////////////////////////////////
-//input17
-   
-   if(AlarmIndicator.B17 == 1)    // Alarm Function
-   {
-      if((((Inputt.B17 ^ InputType.B17) == 1) && (FaultType.B17 == 1))|| In.B17 == 1)    // alarm1 occure and "Lock type"
-      //if(Inputt.B17 == 0)
-      {
-         if(Ack.B17 == 0)
-         {
-            if(In.B17 == 0 && AutoAck == 0x0F)   //use auto acknowlegde
-            {
-               TimeBase1s = 100 ;            //reload again
-               AutoAckDelayTime = AutoAckTime ;
-            }
-
-            In.B17 = 1;                                 // setbit in1
-            if(FlashingFlag == 0)
-            {
-               Output.B17 = 0;           //Flash output1
-            }
-            else
-            {
-               Output.B17 = 1;
-            }
-
-
-            if (~AutoTestFlag)
-            {
-               if(OutputBoth.B17 == 0)                  //Both output
-               {
-                  output_bit(Pbuzzer,1);   //Buzzer
-                  output_bit(Pbell,1);     //Bell
-               }
-               else
-               {
-                  if(OutputType.B17 == 1) output_bit(Pbuzzer,1);     //Buzzer
-                  else output_bit(Pbell,1);                          //Bell
-               }
-            }
-          }
-
-      }
-      else if(FaultType.B17 == 1) Ack.B17 = 0;
-   }
-   else  //Indicator Function
-   {
-      if((Inputt.B17 ^ InputType.B17) == 1)
-      {
-         Output.B17 = 0;
-      }
-      else
-      {
-         Output.B17 = 1;
-      }
-   }
-//}
-
-///////////////////////////////////////////////////////////////////////////////
-
-//input18
-   if(AlarmIndicator.B18 == 1)    // Alarm Function
-   {
-      if((((Inputt.B18 ^ InputType.B18) == 1) && (FaultType.B18 == 1))|| In.B18 == 1)    // alarm1 occure and "Lock type"
-      //if(Inputt.B18 == 0)
-      {
-         if(Ack.B18 == 0)
-         {
-            if(In.B18 == 0 && AutoAck == 0x0F)   //use auto acknowlegde
-            {
-               TimeBase1s = 100 ;            //reload again
-               AutoAckDelayTime = AutoAckTime ;
-            }
-
-            In.B18 = 1;                                 // setbit in1
-            if(FlashingFlag == 0)
-            {
-               Output.B18 = 0;           //Flash output1
-            }
-            else
-            {
-               Output.B18 = 1;
-            }
-
-
-            if (~AutoTestFlag)
-            {
-               if(OutputBoth.B18 == 0)                  //Both output
-               {
-                  output_bit(Pbuzzer,1);   //Buzzer
-                  output_bit(Pbell,1);     //Bell
-               }
-               else
-               {
-                  if(OutputType.B18 == 1) output_bit(Pbuzzer,1);     //Buzzer
-                  else output_bit(Pbell,1);                          //Bell
-               }
-            }
-          }
-
-      }
-      else if(FaultType.B18 == 1) Ack.B18 = 0;
-   }
-   else  //Indicator Function
-   {
-      if((Inputt.B18 ^ InputType.B18) == 1)
-      {
-         Output.B18 = 0;
-      }
-      else
-      {
-         Output.B18 = 1;
-      }
-   }
-//}
-
-///////////////////////////////////////////////////////////////////////////////
-//input19
-   if(AlarmIndicator.B19 == 1)    // Alarm Function
-   {
-      if((((Inputt.B19 ^ InputType.B19) == 1) && (FaultType.B19 == 1))|| In.B19 == 1)    // alarm1 occure and "Lock type"
-      //if(Inputt.B19 == 0)
-      {
-         if(Ack.B19 == 0)
-         {
-            if(In.B19 == 0 && AutoAck == 0x0F)   //use auto acknowlegde
-            {
-               TimeBase1s = 100 ;            //reload again
-               AutoAckDelayTime = AutoAckTime ;
-            }
-
-            In.B19 = 1;                                 // setbit in1
-            if(FlashingFlag == 0)
-            {
-               Output.B19 = 0;           //Flash output1
-            }
-            else
-            {
-               Output.B19 = 1;
-            }
-
-
-            if (~AutoTestFlag)
-            {
-               if(OutputBoth.B19 == 0)                  //Both output
-               {
-                  output_bit(Pbuzzer,1);   //Buzzer
-                  output_bit(Pbell,1);     //Bell
-               }
-               else
-               {
-                  if(OutputType.B19 == 1) output_bit(Pbuzzer,1);     //Buzzer
-                  else output_bit(Pbell,1);                          //Bell
-               }
-            }
-          }
-
-      }
-      else if(FaultType.B19 == 1) Ack.B19 = 0;
-   }
-   else  //Indicator Function
-   {
-      if((Inputt.B19 ^ InputType.B19) == 1)
-      {
-         Output.B19 = 0;
-      }
-      else
-      {
-         Output.B19 = 1;
-      }
-   }
-//}
-
-///////////////////////////////////////////////////////////////////////////////
-//input20
-   if(AlarmIndicator.B20 == 1)    // Alarm Function
-   {
-      if((((Inputt.B20 ^ InputType.B20) == 1) && (FaultType.B20 == 1))|| In.B20 == 1)    // alarm1 occure and "Lock type"
-      //if(Inputt.B18 == 0)
-      {
-         if(Ack.B20 == 0)
-         {
-            if(In.B20 == 0 && AutoAck == 0x0F)   //use auto acknowlegde
-            {
-               TimeBase1s = 100 ;            //reload again
-               AutoAckDelayTime = AutoAckTime ;
-            }
-
-            In.B20 = 1;                                 // setbit in1
-            if(FlashingFlag == 0)
-            {
-               Output.B20 = 0;           //Flash output1
-            }
-            else
-            {
-               Output.B20 = 1;
-            }
-
-
-            if (~AutoTestFlag)
-            {
-               if(OutputBoth.B20 == 0)                  //Both output
-               {
-                  output_bit(Pbuzzer,1);   //Buzzer
-                  output_bit(Pbell,1);     //Bell
-               }
-               else
-               {
-                  if(OutputType.B20 == 1) output_bit(Pbuzzer,1);     //Buzzer
-                  else output_bit(Pbell,1);                          //Bell
-               }
-            }
-          }
-
-      }
-      else if(FaultType.B20 == 1) Ack.B20 = 0;
-   }
-   else  //Indicator Function
-   {
-      if((Inputt.B20 ^ InputType.B20) == 1)
-      {
-         Output.B20 = 0;
-      }
-      else
-      {
-         Output.B20 = 1;
-      }
-   }
- */  
-//}
-///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////// END MANUAL RESET //////////////////////////////////////////
-
 
    /////////////////////////////////////////////////////////////////////////////
    ////////////////////////////// AUTO RESET ///////////////////////////////////
@@ -4670,12 +4929,29 @@ static unsigned char inputflag = 0;
          }
        }
       inputflag =1;
+      // SMS Sending   
+      if((SendSMS.B1 ==0) && (functointest_f ==0) && (Ack.B1 ==0))
+      {
+         SendSMS.B1 =1;
+         fprintf(CH2,"AT+CMGS=\"");
+         fprintf(CH2,sms_phonenumber);
+         
+         fprintf(CH2,"\"");
+         putc('\n',CH2);
+         delay_ms(50);
+        
+        fprintf(CH2,SMS_Massage1);   
+        putc('\n',CH2);
+       putc(26,CH2);
+      }
    }
    else if(FaultType.B1 == 0)
    {
       In2.B1 = 0x00;
       Ack.B1 = 0;
       Output.B1 = 1;      //Off LED
+      
+      SendSMS.B1 =0;// Clear SMS
 
       if((OutputType.B1 == 1 || OutputBoth.B1 == 0)&& inputflag ==0)      //If Buzzer or Both
       {
@@ -4740,12 +5016,29 @@ static unsigned char inputflag = 0;
          }
        }
       inputflag =1;
+      // SMS Sending   
+      if((SendSMS.B2 ==0)&& (functointest_f ==0) && (Ack.B2 ==0))
+      {
+         SendSMS.B2 =1;
+         fprintf(CH2,"AT+CMGS=\"");
+         fprintf(CH2,sms_phonenumber);
+         
+         fprintf(CH2,"\"");
+         putc('\n',CH2);
+         delay_ms(50);
+        
+        fprintf(CH2,SMS_Massage2); 
+        putc('\n',CH2);
+       putc(26,CH2);
+      }
    }
    else if(FaultType.B2 == 0)
    {
       In2.B2 = 0x00;
       Ack.B2 = 0;
       Output.B2 = 1;      //Off LED
+      
+      SendSMS.B2 =0;// Clear SMS
 
       if((OutputType.B2 == 1 || OutputBoth.B2 == 0)&& inputflag ==0)      //If Buzzer or Both
       {
@@ -4810,12 +5103,29 @@ static unsigned char inputflag = 0;
          }
        }
       inputflag =1;
+      // SMS Sending   
+      if((SendSMS.B3 ==0)&& (functointest_f ==0) && (Ack.B3 ==0))
+      {
+         SendSMS.B3 =1;
+         fprintf(CH2,"AT+CMGS=\"");
+         fprintf(CH2,sms_phonenumber);
+         
+         fprintf(CH2,"\"");
+         putc('\n',CH2);
+         delay_ms(50);
+        
+        fprintf(CH2,SMS_Massage3); 
+        putc('\n',CH2);
+       putc(26,CH2);
+      }
    }
    else if(FaultType.B3 == 0)
    {
       In2.B3 = 0x00;
       Ack.B3 = 0;
       Output.B3 = 1;      //Off LED
+      
+      SendSMS.B3 =0;// Clear SMS
 
       if((OutputType.B3 == 1 || OutputBoth.B3 == 0)&& inputflag ==0)      //If Buzzer or Both
       {
@@ -4880,13 +5190,29 @@ static unsigned char inputflag = 0;
          }
        }
       inputflag =1;
+      // SMS Sending   
+      if((SendSMS.B4 ==0)&& (functointest_f ==0) && (Ack.B4 ==0))
+      {
+         SendSMS.B4 =1;
+         fprintf(CH2,"AT+CMGS=\"");
+         fprintf(CH2,sms_phonenumber);
+         
+         fprintf(CH2,"\"");
+         putc('\n',CH2);
+         delay_ms(50);
+        
+        fprintf(CH2,SMS_Massage4); 
+        putc('\n',CH2);
+       putc(26,CH2);
+      }
    }
    else if(FaultType.B4 == 0)
    {
       In2.B4 = 0x00;
       Ack.B4 = 0;
       Output.B4 = 1;      //Off LED
-
+      SendSMS.B4 =0;// Clear SMS
+      
       if((OutputType.B4 == 1 || OutputBoth.B4 == 0)&& inputflag ==0)      //If Buzzer or Both
       {
          if(CheckAutoReset(0x01) == 1);   //Check other Input "Ack" or not if not,do nothing
@@ -4950,13 +5276,29 @@ static unsigned char inputflag = 0;
          }
        }
       inputflag =1;
+      // SMS Sending   
+      if((SendSMS.B5 ==0)&& (functointest_f ==0) && (Ack.B5 ==0))
+      {
+         SendSMS.B5 =1;
+         fprintf(CH2,"AT+CMGS=\"");
+         fprintf(CH2,sms_phonenumber);
+         
+         fprintf(CH2,"\"");
+         putc('\n',CH2);
+         delay_ms(50);
+        
+        fprintf(CH2,SMS_Massage5); 
+        putc('\n',CH2);
+       putc(26,CH2);
+      }
    }
    else if(FaultType.B5 == 0)
    {
       In2.B5 = 0x00;
       Ack.B5 = 0;
       Output.B5 = 1;      //Off LED
-
+      SendSMS.B5 =0;// Clear SMS
+       
       if((OutputType.B5 == 1 || OutputBoth.B5 == 0)&& inputflag ==0)      //If Buzzer or Both
       {
          if(CheckAutoReset(0x01) == 1);   //Check other Input "Ack" or not if not,do nothing
@@ -5020,12 +5362,28 @@ static unsigned char inputflag = 0;
          }
        }
       inputflag =1;
+      // SMS Sending   
+      if((SendSMS.B6 ==0)&& (functointest_f ==0) && (Ack.B6 ==0))
+      {
+         SendSMS.B6 =1;
+         fprintf(CH2,"AT+CMGS=\"");
+         fprintf(CH2,sms_phonenumber);
+         
+         fprintf(CH2,"\"");
+         putc('\n',CH2);
+         delay_ms(50);
+        
+        fprintf(CH2,SMS_Massage6);  
+        putc('\n',CH2);
+       putc(26,CH2);
+      }
    }
    else if(FaultType.B6 == 0)
    {
       In2.B6 = 0x00;
       Ack.B6 = 0;
       Output.B6 = 1;      //Off LED
+      SendSMS.B6 =0;// Clear SMS
 
       if((OutputType.B6 == 1 || OutputBoth.B6 == 0)&& inputflag ==0)      //If Buzzer or Both
       {
@@ -5090,12 +5448,28 @@ static unsigned char inputflag = 0;
          }
        }
       inputflag =1;
+      // SMS Sending   
+      if((SendSMS.B7 ==0)&& (functointest_f ==0) && (Ack.B7 ==0))
+      {
+         SendSMS.B7 =1;
+         fprintf(CH2,"AT+CMGS=\"");
+         fprintf(CH2,sms_phonenumber);
+         
+         fprintf(CH2,"\"");
+         putc('\n',CH2);
+         delay_ms(50);
+        
+        fprintf(CH2,SMS_Massage7);  
+        putc('\n',CH2);
+       putc(26,CH2);
+      }
    }
    else if(FaultType.B7 == 0)
    {
       In2.B7 = 0x00;
       Ack.B7 = 0;
       Output.B7 = 1;      //Off LED
+      SendSMS.B7 =0;// Clear SMS
 
       if((OutputType.B7 == 1 || OutputBoth.B7 == 0)&& inputflag ==0)      //If Buzzer or Both
       {
@@ -5160,12 +5534,28 @@ static unsigned char inputflag = 0;
          }
        }
       inputflag =1;
+      // SMS Sending   
+      if((SendSMS.B8 ==0) && (functointest_f ==0) && (Ack.B8 ==0))
+      {
+         SendSMS.B8 =1;
+         fprintf(CH2,"AT+CMGS=\"");
+         fprintf(CH2,sms_phonenumber);
+         
+         fprintf(CH2,"\"");
+         putc('\n',CH2);
+         delay_ms(50);
+        
+        fprintf(CH2,SMS_Massage8);   
+        putc('\n',CH2);
+        putc(26,CH2);
+      }
    }
    else if(FaultType.B8 == 0)
    {
       In2.B8 = 0x00;
       Ack.B8 = 0;
       Output.B8 = 1;      //Off LED
+      SendSMS.B8 =0;// Clear SMS
 
       if((OutputType.B8 == 1 || OutputBoth.B8 == 0)&& inputflag ==0)      //If Buzzer or Both
       {
@@ -5230,12 +5620,28 @@ static unsigned char inputflag = 0;
          }
        }
       inputflag =1;
+      // SMS Sending   
+      if((SendSMS.B9 ==0) && (functointest_f ==0) && (Ack.B9 ==0))
+      {
+         SendSMS.B9 =1;
+         fprintf(CH2,"AT+CMGS=\"");
+         fprintf(CH2,sms_phonenumber);
+         
+         fprintf(CH2,"\"");
+         putc('\n',CH2);
+         delay_ms(50);
+        
+        fprintf(CH2,SMS_Massage9);   
+        putc('\n',CH2);
+        putc(26,CH2);
+      }
    }
    else if(FaultType.B9 == 0)
    {
       In2.B9 = 0x00;
       Ack.B9 = 0;
       Output.B9 = 1;      //Off LED
+      SendSMS.B9 =0;// Clear SMS
 
       if((OutputType.B9 == 1 || OutputBoth.B9 == 0)&& inputflag ==0)      //If Buzzer or Both
       {
@@ -5300,12 +5706,28 @@ static unsigned char inputflag = 0;
          }
        }
       inputflag =1;
+      // SMS Sending   
+      if((SendSMS.B10 ==0) && (functointest_f ==0) && (Ack.B10 ==0))
+      {
+         SendSMS.B10 =1;
+         fprintf(CH2,"AT+CMGS=\"");
+         fprintf(CH2,sms_phonenumber);
+         
+         fprintf(CH2,"\"");
+         putc('\n',CH2);
+         delay_ms(50);
+        
+        fprintf(CH2,SMS_Massage10);   
+        putc('\n',CH2);
+        putc(26,CH2);
+      }
    }
    else if(FaultType.B10 == 0)
    {
       In2.B10 = 0x00;
       Ack.B10 = 0;
       Output.B10 = 1;      //Off LED
+      SendSMS.B10 =0;// Clear SMS
 
       if((OutputType.B10 == 1 || OutputBoth.B10 == 0)&& inputflag ==0)      //If Buzzer or Both
       {
@@ -5376,12 +5798,28 @@ static unsigned char inputflag = 0;
          }
        }
       inputflag =1;
+      // SMS Sending   
+        if((SendSMS.B11 ==0) && (functointest_f ==0) && (Ack.B11 ==0))
+        {
+          SendSMS.B11 =1;
+          fprintf(CH2,"AT+CMGS=\"");
+          fprintf(CH2,sms_phonenumber);
+          
+          fprintf(CH2,"\"");
+          putc('\n',CH2);
+          delay_ms(50);
+         
+         fprintf(CH2,SMS_Massage11);   
+         putc('\n',CH2);
+         putc(26,CH2);
+        }
    }
    else if(FaultType.B11 == 0)
    {
       In2.B11 = 0x00;
       Ack.B11 = 0;
       Output.B11 = 1;      //Off LED
+      SendSMS.B11 =0;// Clear SMS
 
       if((OutputType.B11 == 1 || OutputBoth.B11 == 0)&& inputflag ==0)      //If Buzzer or Both
       {
@@ -5446,12 +5884,28 @@ static unsigned char inputflag = 0;
          }
        }
       inputflag =1;
+      // SMS Sending   
+        if((SendSMS.B12 ==0) && (functointest_f ==0) && (Ack.B12 ==0))
+        {
+          SendSMS.B12 =1;
+          fprintf(CH2,"AT+CMGS=\"");
+          fprintf(CH2,sms_phonenumber);
+          
+          fprintf(CH2,"\"");
+          putc('\n',CH2);
+          delay_ms(50);
+         
+         fprintf(CH2,SMS_Massage12);   
+         putc('\n',CH2);
+         putc(26,CH2);
+        }
    }
    else if(FaultType.B12 == 0)
    {
       In2.B12 = 0x00;
       Ack.B12 = 0;
       Output.B12 = 1;      //Off LED
+      SendSMS.B12 =0;// Clear SMS
 
       if((OutputType.B12 == 1 || OutputBoth.B12 == 0)&& inputflag ==0)      //If Buzzer or Both
       {
@@ -5516,12 +5970,28 @@ static unsigned char inputflag = 0;
          }
        }
       inputflag =1;
+      // SMS Sending   
+        if((SendSMS.B13 ==0) && (functointest_f ==0) && (Ack.B13 ==0))
+        {
+          SendSMS.B13 =1;
+          fprintf(CH2,"AT+CMGS=\"");
+          fprintf(CH2,sms_phonenumber);
+          
+          fprintf(CH2,"\"");
+          putc('\n',CH2);
+          delay_ms(50);
+         
+         fprintf(CH2,SMS_Massage13);   
+         putc('\n',CH2);
+         putc(26,CH2);
+        }
    }
    else if(FaultType.B13 == 0)
    {
       In2.B13 = 0x00;
       Ack.B13 = 0;
       Output.B13 = 1;      //Off LED
+      SendSMS.B13 =0;// Clear SMS
 
       if((OutputType.B13 == 1 || OutputBoth.B13 == 0)&& inputflag ==0)      //If Buzzer or Both
       {
@@ -5586,12 +6056,28 @@ static unsigned char inputflag = 0;
          }
        }
       inputflag =1;
+      // SMS Sending   
+        if((SendSMS.B14 ==0) && (functointest_f ==0) && (Ack.B14 ==0))
+        {
+          SendSMS.B14 =1;
+          fprintf(CH2,"AT+CMGS=\"");
+          fprintf(CH2,sms_phonenumber);
+          
+          fprintf(CH2,"\"");
+          putc('\n',CH2);
+          delay_ms(50);
+         
+         fprintf(CH2,SMS_Massage14);   
+         putc('\n',CH2);
+         putc(26,CH2);
+        }
    }
    else if(FaultType.B14 == 0)
    {
       In2.B14 = 0x00;
       Ack.B14 = 0;
       Output.B14 = 1;      //Off LED
+      SendSMS.B14 =0;// Clear SMS
 
       if((OutputType.B14 == 1 || OutputBoth.B14 == 0)&& inputflag ==0)      //If Buzzer or Both
       {
@@ -5656,12 +6142,28 @@ static unsigned char inputflag = 0;
          }
        }
       inputflag =1;
+      // SMS Sending   
+        if((SendSMS.B15 ==0) && (functointest_f ==0) && (Ack.B15 ==0))
+        {
+          SendSMS.B15 =1;
+          fprintf(CH2,"AT+CMGS=\"");
+          fprintf(CH2,sms_phonenumber);
+          
+          fprintf(CH2,"\"");
+          putc('\n',CH2);
+          delay_ms(50);
+         
+         fprintf(CH2,SMS_Massage15);   
+         putc('\n',CH2);
+         putc(26,CH2);
+        }
    }
    else if(FaultType.B15 == 0)
    {
       In2.B15 = 0x00;
       Ack.B15 = 0;
       Output.B15 = 1;      //Off LED
+      SendSMS.B15 =0;// Clear SMS
 
       if((OutputType.B15 == 1 || OutputBoth.B15 == 0)&& inputflag ==0)      //If Buzzer or Both
       {
@@ -5726,12 +6228,28 @@ static unsigned char inputflag = 0;
          }
        }
       inputflag =1;
+      // SMS Sending   
+        if((SendSMS.B16 ==0) && (functointest_f ==0) && (Ack.B16 ==0))
+        {
+          SendSMS.B16 =1;
+          fprintf(CH2,"AT+CMGS=\"");
+          fprintf(CH2,sms_phonenumber);
+          
+          fprintf(CH2,"\"");
+          putc('\n',CH2);
+          delay_ms(50);
+         
+         fprintf(CH2,SMS_Massage16);   
+         putc('\n',CH2);
+         putc(26,CH2);
+        }
    }
    else if(FaultType.B16 == 0)
    {
       In2.B16 = 0x00;
       Ack.B16 = 0;
       Output.B16 = 1;      //Off LED
+      SendSMS.B16 =0;// Clear SMS
 
       if((OutputType.B16 == 1 || OutputBoth.B16 == 0)&& inputflag ==0)      //If Buzzer or Both
       {
@@ -5759,253 +6277,7 @@ static unsigned char inputflag = 0;
       }
    }
    
-   /*
-//input17
-   if(((Inputt.B17 ^ InputType.B17) == 1) && (FaultType.B17 == 0))    // alarm1 occure and " Non Lock type"
-   {
-      if(In2.B17 == 0 && AutoAck == 0x0F && Ack.B17 == 0)   //use auto acknowlegde
-      {
-            TimeBase1s = 100 ;            //reload again
-            AutoAckDelayTime = AutoAckTime ;
-      }
-
-      In2.B17 = 1;
-      if(Ack.B17 == 0)
-      {
-         if(FlashingFlag == 0)
-            {
-               Output.B17 = 0;           //Flash output1
-            }
-            else
-            {
-               Output.B17 = 1;
-            }
-         if (~AutoTestFlag)
-         {
-             if(OutputBoth.B17 == 0)        //Both output
-             {
-               output_bit(Pbuzzer,1);   //Buzzer
-               output_bit(Pbell,1);     //Bell
-             }
-             else
-             {
-               if(OutputType.B17 == 1) output_bit(Pbuzzer,1);     //Buzzer
-               else output_bit(Pbell,1);                          //Bell
-             }
-         }
-       }
-
-   }
-   else if(FaultType.B17 == 0)
-   {
-      In2.B17 = 0x00;
-      Ack.B17 = 0;
-      Output.B17 = 1;      //Off LED
-
-      if(OutputType.B17 == 1 || OutputBoth.B17 == 0)      //If Buzzer or Both
-      {
-         if(CheckAutoReset(0x01) == 1);   //Check other Input "Ack" or not if not,do nothing
-         else
-         {
-            output_bit(Pbuzzer,1);   //Clear Buzzer
-         }
-      }
-
-
-      if(OutputType.B17 == 0 || OutputBoth.B17 == 0)  //If Bell or Both
-      {
-         if(CheckAutoReset(0x02) == 1);
-         else
-         {
-            output_bit(Pbell,1);      //Clear Bell
-         }
-      }
-   }
-//input18
-   if(((Inputt.B18 ^ InputType.B18) == 1) && (FaultType.B18 == 0))    // alarm1 occure and " Non Lock type"
-   {
-      if(In2.B18 == 0 && AutoAck == 0x0F && Ack.B18 == 0)   //use auto acknowlegde
-      {
-            TimeBase1s = 100 ;            //reload again
-            AutoAckDelayTime = AutoAckTime ;
-      }
-
-      In2.B18 = 1;
-      if(Ack.B18 == 0)
-      {
-         if(FlashingFlag == 0)
-            {
-               Output.B18 = 0;           //Flash output1
-            }
-            else
-            {
-               Output.B18 = 1;
-            }
-         if (~AutoTestFlag)
-         {
-             if(OutputBoth.B18 == 0)        //Both output
-             {
-               output_bit(Pbuzzer,1);   //Buzzer
-               output_bit(Pbell,1);     //Bell
-             }
-             else
-             {
-               if(OutputType.B18 == 1) output_bit(Pbuzzer,1);     //Buzzer
-               else output_bit(Pbell,1);                          //Bell
-             }
-         }
-       }
-
-   }
-   else if(FaultType.B18 == 0)
-   {
-      In2.B18 = 0x00;
-      Ack.B18 = 0;
-      Output.B18 = 1;      //Off LED
-
-      if(OutputType.B18== 1 || OutputBoth.B18 == 0)      //If Buzzer or Both
-      {
-         if(CheckAutoReset(0x01) == 1);   //Check other Input "Ack" or not if not,do nothing
-         else
-         {
-            output_bit(Pbuzzer,1);   //Clear Buzzer
-         }
-      }
-
-
-      if(OutputType.B18 == 0 || OutputBoth.B18 == 0)  //If Bell or Both
-      {
-         if(CheckAutoReset(0x02) == 1);
-         else
-         {
-            output_bit(Pbell,1);      //Clear Bell
-         }
-      }
-   }
-//input19
-   if(((Inputt.B19 ^ InputType.B19) == 1) && (FaultType.B19 == 0))    // alarm1 occure and " Non Lock type"
-   {
-      if(In2.B19 == 0 && AutoAck == 0x0F && Ack.B19 == 0)   //use auto acknowlegde
-      {
-            TimeBase1s = 100 ;            //reload again
-            AutoAckDelayTime = AutoAckTime ;
-      }
-
-      In2.B19 = 1;
-      if(Ack.B19 == 0)
-      {
-         if(FlashingFlag == 0)
-            {
-               Output.B19 = 0;           //Flash output1
-            }
-            else
-            {
-               Output.B19 = 1;
-            }
-         if (~AutoTestFlag)
-         {
-             if(OutputBoth.B19 == 0)        //Both output
-             {
-               output_bit(Pbuzzer,1);   //Buzzer
-               output_bit(Pbell,1);     //Bell
-             }
-             else
-             {
-               if(OutputType.B19 == 1) output_bit(Pbuzzer,1);     //Buzzer
-               else output_bit(Pbell,1);                          //Bell
-             }
-         }
-       }
-
-   }
-   else if(FaultType.B19 == 0)
-   {
-      In2.B19 = 0x00;
-      Ack.B19 = 0;
-      Output.B19 = 1;      //Off LED
-
-      if(OutputType.B19== 1 || OutputBoth.B19 == 0)      //If Buzzer or Both
-      {
-         if(CheckAutoReset(0x01) == 1);   //Check other Input "Ack" or not if not,do nothing
-         else
-         {
-            output_bit(Pbuzzer,1);   //Clear Buzzer
-         }
-      }
-
-
-      if(OutputType.B19 == 0 || OutputBoth.B19== 0)  //If Bell or Both
-      {
-         if(CheckAutoReset(0x02) == 1);
-         else
-         {
-            output_bit(Pbell,1);      //Clear Bell
-         }
-      }
-   }
-   //input20
-   if(((Inputt.B20 ^ InputType.B20) == 1) && (FaultType.B20 == 0))    // alarm1 occure and " Non Lock type"
-   {
-      if(In2.B20 == 0 && AutoAck == 0x0F && Ack.B20 == 0)   //use auto acknowlegde
-      {
-            TimeBase1s = 100 ;            //reload again
-            AutoAckDelayTime = AutoAckTime ;
-      }
-
-      In2.B20 = 1;
-      if(Ack.B20 == 0)
-      {
-         if(FlashingFlag == 0)
-            {
-               Output.B20 = 0;           //Flash output1
-            }
-            else
-            {
-               Output.B20 = 1;
-            }
-         if (~AutoTestFlag)
-         {
-             if(OutputBoth.B20 == 0)        //Both output
-             {
-               output_bit(Pbuzzer,1);   //Buzzer
-               output_bit(Pbell,1);     //Bell
-             }
-             else
-             {
-               if(OutputType.B20 == 1) output_bit(Pbuzzer,1);     //Buzzer
-               else output_bit(Pbell,1);                          //Bell
-             }
-         }
-       }
-
-   }
-   else if(FaultType.B20 == 0)
-   {
-      In2.B20 = 0x00;
-      Ack.B20 = 0;
-      Output.B20 = 1;      //Off LED
-
-      if(OutputType.B20== 1 || OutputBoth.B20 == 0)      //If Buzzer or Both
-      {
-         if(CheckAutoReset(0x01) == 1);   //Check other Input "Ack" or not if not,do nothing
-         else
-         {
-            output_bit(Pbuzzer,1);   //Clear Buzzer
-         }
-      }
-
-
-      if(OutputType.B20 == 0 || OutputBoth.B20 == 0)  //If Bell or Both
-      {
-         if(CheckAutoReset(0x02) == 1);
-         else
-         {
-            output_bit(Pbell,1);      //Clear Bell
-         }
-      }
-   }
-   */
- //}
+   
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -6891,50 +7163,15 @@ void main()
    
    delay_ms(50);
    output_bit(Pled,0);   //power on watchdog signal
-
-   //jj
-   //setup_adc_ports(NO_ANALOGS|VSS_VDD);
-   //setup_adc(ADC_OFF|ADC_TAD_MUL_0);
-   
-   //setup_spi(FALSE);
    
    setup_timer_0(RTCC_INTERNAL);
-   //setup_timer_1(T1_DISABLED);
    setup_timer_2(T2_DIV_BY_16,196,16);         //10ms
-   //setup_timer_3(T3_DISABLED|T3_DIV_BY_1);
-   //setup_comparator(NC_NC_NC_NC);
-   //setup_vref(FALSE);
    enable_interrupts(INT_TIMER2);
    enable_interrupts(INT_RDA);
    
-   //setup_oscillator(False);
-   
-
-   //  set_tris_c (0b01010111);
-   //setup_spi(SPI_MASTER | SPI_XMIT_L_TO_H |SPI_SS_DISABLED|SPI_H_TO_L  | SPI_CLK_DIV_4  );
-   //setup_spi(SPI_MASTER | SPI_H_TO_L  | SPI_CLK_DIV_4 |SPI_SS_DISABLED); // Initial SPI
-   //setup_spi(SPI_MASTER|SPI_H_TO_L|SPI_SS_DISABLED|SPI_CLK_DIV_16);
-   //setup_spi2( FALSE );
-   //setup_spi( FALSE );
-   
-  // setup_spi(SPI_MASTER |SPI_SS_DISABLED | SPI_L_TO_H | SPI_XMIT_L_TO_H| SPI_CLK_DIV_4 ); //masterOK
    
    setup_spi(SPI_MASTER  | SPI_L_TO_H | SPI_XMIT_L_TO_H| SPI_CLK_DIV_64); //master1 jj
 
-    //setup_spi(SPI_MASTER | SPI_L_TO_H | SPI_XMIT_L_TO_H | SPI_CLK_DIV_4 ); //master2
-    //setup_spi(SPI_MASTER |SPI_SS_DISABLED |SPI_SAMPLE_AT_END | SPI_H_TO_L | SPI_XMIT_L_TO_H| SPI_CLK_DIV_4 ); //master1.1
-   //spi_init(SPI1_MODE0, TRUE);
-   //spi_init(250000);
-   //setup_spi(SPI_MASTER | SPI_XMIT_L_TO_H | SPI_CLK_DIV_4 );
-   //setup_spi(SPI_SS_DISABLED  | SPI_XMIT_L_TO_H | SPI_CLK_DIV_4 );
-   //setup_spi(SPI_MASTER | SPI_H_TO_L | SPI_CLK_T2 | SPI_XMIT_L_TO_H);
-   //setup_spi(SPI_MASTER | SPI_H_TO_L| SPI_SAMPLE_AT_END | SPI_CLK_DIV_64);//master3
-   //setup_spi(SPI_MASTER |SPI_SS_DISABLED| SPI_L_TO_H | SPI_SAMPLE_AT_END | SPI_CLK_DIV_4 );
-   //setup_spi(SPI_MASTER | SPI_L_TO_H | SPI_XMIT_L_TO_H | SPI_CLK_DIV_4);
-   //setup_spi(SPI_MASTER |SPI_SS_DISABLED | SPI_XMIT_L_TO_H| SPI_CLK_DIV_4 );
-   //setup_spi(SPI_MASTER | SPI_L_TO_H | SPI_CLK_DIV_4);
-   //setup_spi(SPI_MASTER | SPI_H_TO_L | SPI_CLK_DIV_16);
-   //setup_spi(SPI_MASTER |SPI_SS_DISABLED| spi_L_to_H| SPI_XMIT_L_TO_H|SPI_CLK_DIV_4 );
   
    IO_INIT();   //initializes the MCP23S17 chip.//----------jj
   
@@ -6979,11 +7216,6 @@ void main()
    Output.B15 = 1;
    Output.B16 = 1;
    
-   //Output.B17 = 1;
-   //Output.B18 = 1;
-   //Output.B19 = 1;
-   //Output.B20 = 1;
-   
    ////////////////////
    In.B1 = 0;
    In.B2 = 0;
@@ -7001,10 +7233,6 @@ void main()
    In.B14 = 0;
    In.B15 = 0;
    In.B16 = 0;
-   //In.B17 = 0;
-   //In.B18 = 0;
-   //In.B19 = 0;
-   //In.B20 = 0;
     ////////////////////
    In2.B1 = 0;
    In2.B2 = 0;
@@ -7022,39 +7250,7 @@ void main()
    In2.B14 = 0;
    In2.B15 = 0;
    In2.B16 = 0;
-   
-   /*
-   //  jj
-   //Input
-   if(FaultNCNO[i] ==NO)
-   {
-      Inputt.B1 = 1;
-      Inputt.B2 = 1;
-      Inputt.B3 = 1;
-      Inputt.B4 = 1;
-      Inputt.B5 = 1;
-      Inputt.B6 = 1;
-      Inputt.B7 = 1;
-      Inputt.B8 = 1;
-      Inputt.B9 = 1;
-      Inputt.B10 = 1;
-      Inputt.B11 = 1;
-      Inputt.B12 = 1;
-      Inputt.B13 = 1;
-      Inputt.B14 = 1;
-      Inputt.B15 = 1;
-      Inputt.B16 = 1;
-      //In.B17 = 1;
-      //In.B18 = 1;
-      //In.B19 = 1;
-      //In.B20 = 1;
-   }
-   else
-   {
-      
-   }
-   */
-    ////////////////////
+
    
    ////////////////////////
    Ack.B1 = 0;
@@ -7073,11 +7269,6 @@ void main()
    Ack.B14 = 0;
    Ack.B15 = 0;
    Ack.B16 = 0;
-   //Ack.B17 = 0;
-   //Ack.B18 = 0;
-   //Ack.B19 = 0;
-   //Ack.B20 = 0;
- 
 
     /////// read setting //////////
 
@@ -7152,10 +7343,6 @@ void main()
       FaultType.B14 = 1;
       FaultType.B15 = 1;
       FaultType.B16 = 1;
-      //FaultType.B17 = 1;
-      //FaultType.B18 = 1;
-      //FaultType.B19 = 1;
-      //FaultType.B20 = 1;
       
       ////////////////////////////
       OutputType.B1 = 1;
@@ -7174,10 +7361,6 @@ void main()
       OutputType.B14 = 1;
       OutputType.B15 = 1;
       OutputType.B16 = 1;
-      //OutputType.B17 = 1;
-      //OutputType.B18 = 1;
-      //OutputType.B19 = 1;
-      //OutputType.B20 = 1;
  
       /////////////////////////////
       OutputBoth.B1 = 1;
@@ -7218,10 +7401,6 @@ void main()
       AlarmIndicator.B14 = 1;
       AlarmIndicator.B15 = 1;
       AlarmIndicator.B16 = 1;
-      //AlarmIndicator.B17 = 1;
-      //AlarmIndicator.B18 = 1;
-      //AlarmIndicator.B19 = 1;
-      //AlarmIndicator.B20 = 1;
       
       ///////////// JACK///////////////////
    EEpDat = read_eeprom(0x10);
@@ -7249,15 +7428,7 @@ void main()
    RED_Colour.B14 = EEpDat >> 3;
    RED_Colour.B15 = EEpDat >> 4;
    RED_Colour.B16 = EEpDat >> 5;
-   //RED_Colour.B17 = EEpDat >> 6;
-   //RED_Colour.B18 = EEpDat >> 7;
-   
-   //EEpDat = read_eeprom(0x13);
-   //Red19_20 = EEpDat;
-   //RED_Colour.B19 = EEpDat;
-   //RED_Colour.B20 = EEpDat >> 1;
-   
-   
+  
    EEpDat = read_eeprom(0x14);
    //Green1_8 = EEpDat;
    GREEN_Colour.B1 = EEpDat;
@@ -7283,13 +7454,7 @@ void main()
    GREEN_Colour.B14 = EEpDat >> 3;
    GREEN_Colour.B15 = EEpDat >> 4;
    GREEN_Colour.B16 = EEpDat >> 5;
-   //GREEN_Colour.B17 = EEpDat >> 6;
-   //GREEN_Colour.B18 = EEpDat >> 7;
-   
-   //EEpDat = read_eeprom(0x17);
-   //Green19_20 = EEpDat;
-   //GREEN_Colour.B19 = EEpDat;
-   //GREEN_Colour.B20 = EEpDat >> 1;
+
    
    ///////////// JACK/////////////////////////////////////
       
@@ -7319,11 +7484,7 @@ void main()
             
    IO_OUTPUT_A(IO_DEVICE_4, 0xff);
    IO_OUTPUT_B(IO_DEVICE_4, 0xff);
-   
-   
-   
-   delay_ms(500);
-   
+     
    // jj
    char i;
    for(i=1;i<=16;i++)
@@ -7444,19 +7605,36 @@ void main()
       
    }
 
-  /*
-   //Start-Up UART1
-  fprintf(CH1,"\n\n\n\r");
-  fprintf(CH1,"Demo UART1 ET-BASE PIC40/46K22(ICD2)\n\r");
-  fprintf(CH1,"Run 64.00 MHz(Internal 16 MHz + PLL)\n\r");  
-  fprintf(CH1,"UART1>");
-  
-  //Start-Up UART2
-  fprintf(CH2,"\n\n\n\r");
-  fprintf(CH2,"Demo UART2 ET-BASE PIC40/46K22(ICD2)\n\r");
-  fprintf(CH2,"Run 64.00 MHz(Internal 16 MHz + PLL)\n\r");  
-  fprintf(CH2,"UART2>");
- */
+  //GSM SIM900 Init
+   delay_ms(1000);
+   fprintf(CH2,"AT+CMGF=1"); 
+   putc('\n',CH2);
+   delay_ms(50);
+   
+   SendSMS.B1 =0;
+   SendSMS.B2 =0;
+   SendSMS.B3 =0;
+   SendSMS.B4 =0;
+   SendSMS.B5 =0;
+   SendSMS.B6 =0;
+   SendSMS.B7 =0;
+   SendSMS.B8 =0;
+   SendSMS.B9 =0;
+   SendSMS.B10 =0;
+   SendSMS.B11 =0;
+   SendSMS.B12 =0;
+   SendSMS.B13 =0;
+   SendSMS.B14 =0;
+   SendSMS.B15 =0;
+   SendSMS.B16 =0;
+   
+   char m;
+   for(m=0; m<10; m++)
+   {
+      sms_phonenumber[m] = read_eeprom(0x32 + m);
+   }
+   sms_phonenumber[m] = '\0' ; // end string
+   delay_ms(500);
  
    while(TRUE)
    {

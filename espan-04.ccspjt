@@ -26,7 +26,7 @@ AdditionalOptionString=
 6=..\..\..\..\..\Program Files (x86)\PICC\Drivers\9356spi.c
 7=..\..\..\..\..\Program Files (x86)\PICC\Drivers\input.c
 8=
-t1=3711
+t1=7054
 t2=1
 t3=1
 t4=1
@@ -136,7 +136,7 @@ D12_L1=[38464]Project Opened.
 D12_L2=[39368]Started Editing.
 D12_L3=[39438]Project Closed.
 D13=11-09-2021
-D13_L=7
+D13_L=16
 D13_L1=[77981]Project Opened.
 D13_L2=[78056]Started Editing.
 D13_L3=[80033]Stopped Editing.
@@ -144,6 +144,15 @@ D13_L4=[80051]Started Editing.
 D13_L5=[80795]Stopped Editing.
 D13_L6=[80813]Started Editing.
 D13_L7=[81354]Stopped Editing.
+D13_L8=[82363]Started Editing.
+D13_L9=[83118]Stopped Editing.
+D13_L10=[83223]Started Editing.
+D13_L11=[84492]Stopped Editing.
+D13_L12=[84493]Started Editing.
+D13_L13=[85152]Stopped Editing.
+D13_L14=[85208]Started Editing.
+D13_L15=[85668]Stopped Editing.
+D13_L16=[85769]Started Editing.
 
 [Directories]
 Include=C:\Program Files (x86)\PICC\Drivers\;C:\Program Files (x86)\PICC\Devices\
@@ -156,7 +165,7 @@ enabled=0
 chip=1
 D1=
 V1=
-buildcount=29
+buildcount=33
 
 [fileformats]
 forcecoff=0
