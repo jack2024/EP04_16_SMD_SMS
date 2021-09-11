@@ -1,0 +1,445 @@
+ÀÄESPAN-04
+   ÃÄMAIN  0/2320  Ram=4
+   ³  ÃÄ@cinit1  (Inline)  Ram=0
+   ³  ÃÄ@cinit2  (Inline)  Ram=0
+   ³  ÃÄ@delay_ms1  0/48  Ram=1
+   ³  ÃÄIO_INIT  0/150  Ram=0
+   ³  ³  ÃÄIO_WRITE_REGISTER  0/50  Ram=4
+   ³  ³  ÃÄIO_WRITE_REGISTER  0/50  Ram=4
+   ³  ³  ÃÄIO_WRITE_REGISTER  0/50  Ram=4
+   ³  ³  ÃÄIO_WRITE_REGISTER  0/50  Ram=4
+   ³  ³  ÃÄIO_WRITE_REGISTER  0/50  Ram=4
+   ³  ³  ÃÄIO_WRITE_REGISTER  0/50  Ram=4
+   ³  ³  ÃÄIO_WRITE_REGISTER  0/50  Ram=4
+   ³  ³  ÀÄIO_WRITE_REGISTER  0/50  Ram=4
+   ³  ÃÄIO_SET_TRIS_A  0/18  Ram=2
+   ³  ³  ÀÄIO_WRITE_REGISTER  0/50  Ram=4
+   ³  ÃÄIO_SET_TRIS_B  0/20  Ram=2
+   ³  ³  ÀÄIO_WRITE_REGISTER  0/50  Ram=4
+   ³  ÃÄIO_SET_TRIS_A  0/18  Ram=2
+   ³  ³  ÀÄ*
+   ³  ÃÄIO_SET_TRIS_B  0/20  Ram=2
+   ³  ³  ÀÄ*
+   ³  ÃÄIO_WRITE_REGISTER  0/50  Ram=4
+   ³  ÃÄIO_WRITE_REGISTER  0/50  Ram=4
+   ³  ÃÄIO_WRITE_REGISTER  0/50  Ram=4
+   ³  ÃÄIO_WRITE_REGISTER  0/50  Ram=4
+   ³  ÃÄIO_SET_TRIS_A  0/18  Ram=2
+   ³  ³  ÀÄ*
+   ³  ÃÄIO_SET_TRIS_B  0/20  Ram=2
+   ³  ³  ÀÄ*
+   ³  ÃÄIO_SET_TRIS_A  0/18  Ram=2
+   ³  ³  ÀÄ*
+   ³  ÃÄIO_SET_TRIS_B  0/20  Ram=2
+   ³  ³  ÀÄ*
+   ³  ÃÄIO_SET_TRIS_A  0/18  Ram=2
+   ³  ³  ÀÄ*
+   ³  ÃÄIO_SET_TRIS_B  0/20  Ram=2
+   ³  ³  ÀÄ*
+   ³  ÃÄIO_SET_TRIS_A  0/18  Ram=2
+   ³  ³  ÀÄ*
+   ³  ÃÄIO_SET_TRIS_B  0/20  Ram=2
+   ³  ³  ÀÄ*
+   ³  ÃÄRead_Config  0/2810  Ram=1
+   ³  ÃÄRead_input  0/2086  Ram=9
+   ³  ³  ÃÄIO_INPUT_A  0/28  Ram=2
+   ³  ³  ³  ÀÄIO_READ_REGISTER  0/56  Ram=4
+   ³  ³  ÃÄIO_INPUT_B  0/28  Ram=2
+   ³  ³  ³  ÀÄIO_READ_REGISTER  0/56  Ram=4
+   ³  ³  ÃÄIO_INPUT_A  0/28  Ram=2
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄIO_INPUT_B  0/28  Ram=2
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄ@READBITA  0/54  Ram=5
+   ³  ³  ÃÄ@READBITA  0/54  Ram=5
+   ³  ³  ÃÄ@READBITA  0/54  Ram=5
+   ³  ³  ÃÄ@MUL1616  0/34  Ram=5
+   ³  ³  ÃÄ@goto16966  0/58  Ram=0
+   ³  ³  ÃÄ@READBITA  0/54  Ram=5
+   ³  ³  ÃÄ@MUL1616  0/34  Ram=5
+   ³  ³  ÃÄ@goto17005  0/58  Ram=0
+   ³  ³  ÃÄ@READBITA  0/54  Ram=5
+   ³  ³  ÃÄ@READBITA  0/54  Ram=5
+   ³  ³  ÃÄ@READBITA  0/54  Ram=5
+   ³  ³  ÃÄ@MUL1616  0/34  Ram=5
+   ³  ³  ÃÄ@goto17052  0/58  Ram=0
+   ³  ³  ÃÄ@READBITA  0/54  Ram=5
+   ³  ³  ÃÄ@MUL1616  0/34  Ram=5
+   ³  ³  ÃÄ@goto17091  0/58  Ram=0
+   ³  ³  ÀÄStoreReleaseFault  0/94  Ram=3
+   ³  ³     ÃÄ@READBITA  0/54  Ram=5
+   ³  ³     ÀÄ@WRITEBITA  0/66  Ram=6
+   ³  ÃÄSend_Ouput  0/936  Ram=1
+   ³  ³  ÃÄIO_OUTPUT_A  0/22  Ram=2
+   ³  ³  ³  ÀÄIO_WRITE_REGISTER  0/50  Ram=4
+   ³  ³  ÃÄIO_OUTPUT_B  0/22  Ram=2
+   ³  ³  ³  ÀÄIO_WRITE_REGISTER  0/50  Ram=4
+   ³  ³  ÃÄIO_OUTPUT_A  0/22  Ram=2
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄIO_OUTPUT_B  0/22  Ram=2
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄIO_OUTPUT_A  0/22  Ram=2
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄIO_OUTPUT_B  0/22  Ram=2
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄIO_OUTPUT_A  0/22  Ram=2
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÀÄIO_OUTPUT_B  0/22  Ram=2
+   ³  ³     ÀÄ*
+   ³  ÃÄIO_OUTPUT_A  0/22  Ram=2
+   ³  ³  ÀÄ*
+   ³  ÃÄIO_OUTPUT_B  0/22  Ram=2
+   ³  ³  ÀÄ*
+   ³  ÃÄIO_OUTPUT_A  0/22  Ram=2
+   ³  ³  ÀÄ*
+   ³  ÃÄIO_OUTPUT_B  0/22  Ram=2
+   ³  ³  ÀÄ*
+   ³  ÃÄIO_OUTPUT_A  0/22  Ram=2
+   ³  ³  ÀÄ*
+   ³  ÃÄIO_OUTPUT_B  0/22  Ram=2
+   ³  ³  ÀÄ*
+   ³  ÃÄIO_OUTPUT_A  0/22  Ram=2
+   ³  ³  ÀÄ*
+   ³  ÃÄIO_OUTPUT_B  0/22  Ram=2
+   ³  ³  ÀÄ*
+   ³  ÃÄ@delay_ms1  0/48  Ram=1
+   ³  ÃÄ@WRITEBITA  0/66  Ram=6
+   ³  ÃÄ@WRITEBITA  0/66  Ram=6
+   ³  ÃÄ@READBITA  0/54  Ram=5
+   ³  ÃÄ@goto23880  0/58  Ram=0
+   ³  ÃÄ@goto23907  0/58  Ram=0
+   ³  ÃÄModbus_Function  0/6276  Ram=2
+   ³  ³  ÃÄCRC  0/80  Ram=5
+   ³  ³  ³  ÃÄ@const958  0/272  Ram=0
+   ³  ³  ³  ÀÄ@const961  0/272  Ram=0
+   ³  ³  ÃÄCRC  0/80  Ram=5
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄ@delay_ms1  0/48  Ram=1
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@delay_ms1  0/48  Ram=1
+   ³  ³  ÃÄCRC  0/80  Ram=5
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄ@delay_ms1  0/48  Ram=1
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@delay_ms1  0/48  Ram=1
+   ³  ³  ÃÄCRC  0/80  Ram=5
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄ@delay_ms1  0/48  Ram=1
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@delay_ms1  0/48  Ram=1
+   ³  ³  ÃÄCRC  0/80  Ram=5
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄ@delay_ms1  0/48  Ram=1
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@delay_ms1  0/48  Ram=1
+   ³  ³  ÃÄAlarmtosend  0/720  Ram=2
+   ³  ³  ÃÄCRC  0/80  Ram=5
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄ@delay_ms1  0/48  Ram=1
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@delay_ms1  0/48  Ram=1
+   ³  ³  ÃÄCRC  0/80  Ram=5
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄ@delay_ms1  0/48  Ram=1
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@delay_ms1  0/48  Ram=1
+   ³  ³  ÃÄCRC  0/80  Ram=5
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄ@delay_ms1  0/48  Ram=1
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@delay_ms1  0/48  Ram=1
+   ³  ³  ÃÄCRC  0/80  Ram=5
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄ@delay_ms1  0/48  Ram=1
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@delay_ms1  0/48  Ram=1
+   ³  ³  ÃÄRead_input  0/2086  Ram=9
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄcheck_ack  0/334  Ram=3
+   ³  ³  ³  ÀÄ@delay_ms1  0/48  Ram=1
+   ³  ³  ÃÄcheck_reset  0/452  Ram=3
+   ³  ³  ³  ÀÄ@delay_ms1  0/48  Ram=1
+   ³  ³  ÃÄCRC  0/80  Ram=5
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄ@delay_ms1  0/48  Ram=1
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@delay_ms1  0/48  Ram=1
+   ³  ³  ÃÄCRC  0/80  Ram=5
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄ@delay_ms1  0/48  Ram=1
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@delay_ms1  0/48  Ram=1
+   ³  ³  ÃÄRead_input  0/2086  Ram=9
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄcheck_ack  0/334  Ram=3
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄcheck_reset  0/452  Ram=3
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄCRC  0/80  Ram=5
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄ@delay_ms1  0/48  Ram=1
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@delay_ms1  0/48  Ram=1
+   ³  ³  ÃÄCRC  0/80  Ram=5
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄ@delay_ms1  0/48  Ram=1
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@delay_ms1  0/48  Ram=1
+   ³  ³  ÃÄCRC  0/80  Ram=5
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄ@delay_ms1  0/48  Ram=1
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@delay_ms1  0/48  Ram=1
+   ³  ³  ÃÄCRC  0/80  Ram=5
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄ@delay_ms1  0/48  Ram=1
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÃÄ@PUTCHARI_BIU_1  0/8  Ram=0
+   ³  ³  ÀÄ@delay_ms1  0/48  Ram=1
+   ³  ÃÄcheck_ack  0/334  Ram=3
+   ³  ³  ÀÄ*
+   ³  ÃÄcheck_reset  0/452  Ram=3
+   ³  ³  ÀÄ*
+   ³  ÃÄcheck_test  0/252  Ram=11
+   ³  ³  ÃÄ@delay_ms1  0/48  Ram=1
+   ³  ³  ÃÄIO_OUTPUT_A  0/22  Ram=2
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄIO_OUTPUT_B  0/22  Ram=2
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄIO_OUTPUT_A  0/22  Ram=2
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄIO_OUTPUT_B  0/22  Ram=2
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄIO_OUTPUT_A  0/22  Ram=2
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄIO_OUTPUT_B  0/22  Ram=2
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄIO_OUTPUT_A  0/22  Ram=2
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄIO_OUTPUT_B  0/22  Ram=2
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄForceAllAlarm  0/218  Ram=0
+   ³  ³  ÀÄAnal_Function  0/6598  Ram=16
+   ³  ³     ÃÄCheckAutoReset  0/1928  Ram=7
+   ³  ³     ÃÄCheckAutoReset  0/1928  Ram=7
+   ³  ³     ÃÄCheckAutoReset  0/1928  Ram=7
+   ³  ³     ÃÄCheckAutoReset  0/1928  Ram=7
+   ³  ³     ÃÄCheckAutoReset  0/1928  Ram=7
+   ³  ³     ÃÄCheckAutoReset  0/1928  Ram=7
+   ³  ³     ÃÄCheckAutoReset  0/1928  Ram=7
+   ³  ³     ÃÄCheckAutoReset  0/1928  Ram=7
+   ³  ³     ÃÄCheckAutoReset  0/1928  Ram=7
+   ³  ³     ÃÄCheckAutoReset  0/1928  Ram=7
+   ³  ³     ÃÄCheckAutoReset  0/1928  Ram=7
+   ³  ³     ÃÄCheckAutoReset  0/1928  Ram=7
+   ³  ³     ÃÄCheckAutoReset  0/1928  Ram=7
+   ³  ³     ÃÄCheckAutoReset  0/1928  Ram=7
+   ³  ³     ÃÄCheckAutoReset  0/1928  Ram=7
+   ³  ³     ÃÄCheckAutoReset  0/1928  Ram=7
+   ³  ³     ÃÄCheckAutoReset  0/1928  Ram=7
+   ³  ³     ÃÄCheckAutoReset  0/1928  Ram=7
+   ³  ³     ÃÄCheckAutoReset  0/1928  Ram=7
+   ³  ³     ÃÄCheckAutoReset  0/1928  Ram=7
+   ³  ³     ÃÄCheckAutoReset  0/1928  Ram=7
+   ³  ³     ÃÄCheckAutoReset  0/1928  Ram=7
+   ³  ³     ÃÄCheckAutoReset  0/1928  Ram=7
+   ³  ³     ÃÄCheckAutoReset  0/1928  Ram=7
+   ³  ³     ÃÄCheckAutoReset  0/1928  Ram=7
+   ³  ³     ÃÄCheckAutoReset  0/1928  Ram=7
+   ³  ³     ÃÄCheckAutoReset  0/1928  Ram=7
+   ³  ³     ÃÄCheckAutoReset  0/1928  Ram=7
+   ³  ³     ÃÄCheckAutoReset  0/1928  Ram=7
+   ³  ³     ÃÄCheckAutoReset  0/1928  Ram=7
+   ³  ³     ÃÄCheckAutoReset  0/1928  Ram=7
+   ³  ³     ÀÄCheckAutoReset  0/1928  Ram=7
+   ³  ÃÄRead_input  0/2086  Ram=9
+   ³  ³  ÀÄ*
+   ³  ÃÄAnal_Function  0/6598  Ram=16
+   ³  ³  ÀÄ*
+   ³  ÃÄSend_Ouput  0/936  Ram=1
+   ³  ³  ÀÄ*
+   ³  ÃÄDriver595  0/274  Ram=2
+   ³  ÃÄIO_SET_TRIS_A  0/18  Ram=2
+   ³  ³  ÀÄ*
+   ³  ÃÄIO_SET_TRIS_B  0/20  Ram=2
+   ³  ³  ÀÄ*
+   ³  ÃÄIO_SET_TRIS_A  0/18  Ram=2
+   ³  ³  ÀÄ*
+   ³  ÃÄIO_SET_TRIS_B  0/20  Ram=2
+   ³  ³  ÀÄ*
+   ³  ÃÄIO_WRITE_REGISTER  0/50  Ram=4
+   ³  ÃÄIO_WRITE_REGISTER  0/50  Ram=4
+   ³  ÃÄIO_WRITE_REGISTER  0/50  Ram=4
+   ³  ÃÄIO_WRITE_REGISTER  0/50  Ram=4
+   ³  ÃÄIO_SET_TRIS_A  0/18  Ram=2
+   ³  ³  ÀÄ*
+   ³  ÃÄIO_SET_TRIS_B  0/20  Ram=2
+   ³  ³  ÀÄ*
+   ³  ÃÄIO_SET_TRIS_A  0/18  Ram=2
+   ³  ³  ÀÄ*
+   ³  ÃÄIO_SET_TRIS_B  0/20  Ram=2
+   ³  ³  ÀÄ*
+   ³  ÃÄIO_SET_TRIS_A  0/18  Ram=2
+   ³  ³  ÀÄ*
+   ³  ÃÄIO_SET_TRIS_B  0/20  Ram=2
+   ³  ³  ÀÄ*
+   ³  ÃÄIO_SET_TRIS_A  0/18  Ram=2
+   ³  ³  ÀÄ*
+   ³  ÃÄIO_SET_TRIS_B  0/20  Ram=2
+   ³  ³  ÀÄ*
+   ³  ÃÄIO_OUTPUT_A  0/22  Ram=2
+   ³  ³  ÀÄ*
+   ³  ÃÄIO_OUTPUT_B  0/22  Ram=2
+   ³  ³  ÀÄ*
+   ³  ÃÄIO_OUTPUT_A  0/22  Ram=2
+   ³  ³  ÀÄ*
+   ³  ÀÄIO_OUTPUT_B  0/22  Ram=2
+   ³     ÀÄ*
+   ÃÄRDA_isr  0/16  Ram=0
+   ³  ÀÄcheckCommand  0/566  Ram=2
+   ÀÄTIMER2_isr  0/146  Ram=1
