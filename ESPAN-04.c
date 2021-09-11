@@ -305,11 +305,6 @@ struct Bit64    // Input
 {
    int1 B1,B2,B3,B4,B5,B6,B7,B8,B9,B10;
    int1 B11,B12,B13,B14,B15,B16;
-   //int1 B21,B22,B23,B24,B25,B26,B27,B28,B29,B30;
-   //int1 B31,B32,B33,B34,B35,B36,B37,B38,B39,B40;
-   //int1 B41,B42,B43,B44,B45,B46,B47,B48,B49,B50;
-   //int1 B51,B52,B53,B54,B55,B56,B57,B58,B59,B60;
-   //int1 B61,B62,B63,B64;
 };
 
 
@@ -615,7 +610,13 @@ void checkCommand(void)
       RxD_Buff[RxD_DataLen] = SBUF ;      //Byte 3   Data Byte Count
       restart_wdt();
       RxD_DataLen ++ ;
-      index = RxD_Buff[RxD_DataLen - 1] ;    //Data Byte Count
+      if(RxD_Buff[1] == 0x22)   /////SMS setting/////
+      {
+         index = (RxD_Buff[2] * 0x64) + RxD_Buff[3];
+      }
+      else{
+         index = RxD_Buff[RxD_DataLen - 1] ;    //Data Byte Count
+      }
       T_timeout = 0x14; //200ms
       sequence = data_sq ;
    }
@@ -6229,20 +6230,20 @@ static unsigned char inputflag = 0;
        }
       inputflag =1;
       // SMS Sending   
-        if((SendSMS.B16 ==0) && (functointest_f ==0) && (Ack.B16 ==0))
-        {
-          SendSMS.B16 =1;
-          fprintf(CH2,"AT+CMGS=\"");
-          fprintf(CH2,sms_phonenumber);
-          
-          fprintf(CH2,"\"");
-          putc('\n',CH2);
-          delay_ms(50);
-         
-         fprintf(CH2,SMS_Massage16);   
-         putc('\n',CH2);
-         putc(26,CH2);
-        }
+     if((SendSMS.B16 ==0) && (functointest_f ==0) && (Ack.B16 ==0))
+     {
+       SendSMS.B16 =1;
+       fprintf(CH2,"AT+CMGS=\"");
+       fprintf(CH2,sms_phonenumber);
+       
+       fprintf(CH2,"\"");
+       putc('\n',CH2);
+       delay_ms(50);
+      
+      fprintf(CH2,SMS_Massage16);   
+      putc('\n',CH2);
+      putc(26,CH2);
+     }
    }
    else if(FaultType.B16 == 0)
    {
@@ -7250,8 +7251,7 @@ void main()
    In2.B14 = 0;
    In2.B15 = 0;
    In2.B16 = 0;
-
-   
+  
    ////////////////////////
    Ack.B1 = 0;
    Ack.B2 = 0;
@@ -7290,7 +7290,6 @@ void main()
       {
          FaultDelayTime[i] = 0;
       }
-
 
       InputType.B1 = 1;
       InputType.B2 = 1;
@@ -7379,10 +7378,6 @@ void main()
       OutputBoth.B14 = 1;
       OutputBoth.B15 = 1;
       OutputBoth.B16 = 1;
-      //OutputBoth.B17 = 1;
-      //OutputBoth.B18 = 1;
-      //OutputBoth.B19 = 1;
-      //OutputBoth.B20 = 1;
       
       //////////////////////////////////////////////
       AlarmIndicator.B1 = 1;
@@ -7648,46 +7643,17 @@ void main()
          recieve_completed = 0;
       }
       
-
-   /*
-      if(input(PSyncR) != SyncFlag)      //Check Sync
-      {
-         FlashingFlag = input(PSyncR);
-         SyncFlag = input(PSyncR);
-         output_bit(PSyncS,SyncFlag);
-         SyncStatus = 1;
-         Synctimer = 200;
-      }
-   */
-   
-
       check_ack();
       check_reset();
       check_test();
       
       restart_wdt();
       
-      /*
-      if((FaultDelayTime == 0)||(FaultDelayTime == 0xff))
-      {
-         Read_input(); restart_wdt();
-      }
-      else
-      {
-         if(ReadIn_flag)
-         {
-               ReadIn_flag = 0;
-               Read_input(); restart_wdt();
-         }
-      }
-      */
       Read_input(); restart_wdt();// Must be first
       Anal_Function(); restart_wdt();
       Send_Ouput(); restart_wdt();
       
       //Driver595(); restart_wdt();
-      
-      
       output_toggle(PIN_A0);
       
       
@@ -7724,27 +7690,6 @@ void main()
       IO_OUTPUT_A(IO_DEVICE_1, 0xFF); //jj 
       IO_OUTPUT_B(IO_DEVICE_1, 0xFF); //jj 
       
-      
-      /*        
-      if(outmcp23)
-      {
-         outmcp23 = 0;
-         FlashingRateTime = 1; //100 time per sec.
-         
-         MCP23s17_Ip_dat = IO_INPUT_A(IO_DEVICE_0);
-         restart_wdt();
-                  
-         MCP23s17_Ip_dat = IO_INPUT_B(IO_DEVICE_0);
-         restart_wdt();
-                
-         IO_OUTPUT_A(IO_DEVICE_1, MCP23s17_Ip_dat);
-         restart_wdt();
-         
-         IO_OUTPUT_B(IO_DEVICE_1, MCP23s17_Ip_dat);
-         restart_wdt();   
-        
-      }
-      */
    }
    
 }

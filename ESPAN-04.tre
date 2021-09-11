@@ -54,18 +54,18 @@
    ³  ³  ÃÄ@READBITA  0/54  Ram=5
    ³  ³  ÃÄ@READBITA  0/54  Ram=5
    ³  ³  ÃÄ@MUL1616  0/34  Ram=5
-   ³  ³  ÃÄ@goto36258  0/58  Ram=0
+   ³  ³  ÃÄ@goto6901  0/58  Ram=0
    ³  ³  ÃÄ@READBITA  0/54  Ram=5
    ³  ³  ÃÄ@MUL1616  0/34  Ram=5
-   ³  ³  ÃÄ@goto36298  0/58  Ram=0
+   ³  ³  ÃÄ@goto6941  0/58  Ram=0
    ³  ³  ÃÄ@READBITA  0/54  Ram=5
    ³  ³  ÃÄ@READBITA  0/54  Ram=5
    ³  ³  ÃÄ@READBITA  0/54  Ram=5
    ³  ³  ÃÄ@MUL1616  0/34  Ram=5
-   ³  ³  ÃÄ@goto36344  0/58  Ram=0
+   ³  ³  ÃÄ@goto6988  0/58  Ram=0
    ³  ³  ÃÄ@READBITA  0/54  Ram=5
    ³  ³  ÃÄ@MUL1616  0/34  Ram=5
-   ³  ³  ÃÄ@goto36384  0/58  Ram=0
+   ³  ³  ÃÄ@goto7027  0/58  Ram=0
    ³  ³  ÀÄStoreReleaseFault  0/94  Ram=3
    ³  ³     ÃÄ@READBITA  0/54  Ram=5
    ³  ³     ÀÄ@WRITEBITA  0/66  Ram=6
@@ -105,8 +105,8 @@
    ³  ÃÄ@WRITEBITA  0/66  Ram=6
    ³  ÃÄ@WRITEBITA  0/66  Ram=6
    ³  ÃÄ@READBITA  0/54  Ram=5
-   ³  ÃÄ@goto44511  0/58  Ram=0
-   ³  ÃÄ@goto44537  0/58  Ram=0
+   ³  ÃÄ@goto15147  0/58  Ram=0
+   ³  ÃÄ@goto15174  0/58  Ram=0
    ³  ÃÄ@delay_ms1  0/48  Ram=1
    ³  ÃÄ@PSTRINGC_826  0/32  Ram=2
    ³  ³  ÀÄ@PUTCHAR_2_  0/70  Ram=1
@@ -1109,5 +1109,5 @@
    ³  ÀÄIO_OUTPUT_B  0/22  Ram=2
    ³     ÀÄ*
    ÃÄRDA_isr  0/16  Ram=0
-   ³  ÀÄcheckCommand  0/656  Ram=2
+   ³  ÀÄcheckCommand  0/684  Ram=2
    ÀÄTIMER2_isr  0/146  Ram=1

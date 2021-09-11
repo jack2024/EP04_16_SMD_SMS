@@ -1,6 +1,6 @@
 
-ROM used:   45036/65536 (69%)
-            45036/65536 (69%) including unused fragments
+ROM used:   45064/65536 (69%)
+            45064/65536 (69%) including unused fragments
 
             4.6 Average locations per line
             9.3 Average locations per statement
@@ -13,12 +13,12 @@ Stack size: 31
 
 Lines Stmts  %   Files
 ----- ----- ---  -----
- 7751  4745  98  ESPAN-04.c
+ 7696  4749  98  ESPAN-04.c
    65     0   0  ..\ESPAN04_20 - Delay - SP - SMD - PIC18F252\ESPAN-04.h
  1022     0   0  C:\Program Files (x86)\PICC\Devices\18F26K22.h
  1032   110   2  ..\ESPAN04_20 - Delay - SP - SMD - PIC18F252\23S17.c
 ----- -----
- 9870  4855 Total
+ 9815  4859 Total
 
 Page ROM  %  RAM    Vol Diff  Functions:
 ---- --- --- ---    --- ----  ----------
@@ -41,14 +41,14 @@ Page ROM  %  RAM    Vol Diff  Functions:
 0     66   0    6             @WRITEBITA
 0     86   0    5    357  6.6  CRC
 0    846   1    2   6885  5.5  Alarmtosend
-0    656   1    2   3150  6.4  checkCommand
+0    684   1    2   3360  7.4  checkCommand
 0  10940  12   12  60947 11.0  Modbus_Function
 0   2384   3    9  13242 11.5  Read_input
 0     34   0    5             @MUL1616
-0     58   0    0             @goto36258
-0     58   0    0             @goto36298
-0     58   0    0             @goto36344
-0     58   0    0             @goto36384
+0     58   0    0             @goto6901
+0     58   0    0             @goto6941
+0     58   0    0             @goto6988
+0     58   0    0             @goto7027
 0   5284   6   13  23002  8.5  Read_Config
 0     16   0    0     35  1.6  RDA_isr
 0    146   0    1   1334  5.9  TIMER2_isr
@@ -142,29 +142,29 @@ Page ROM  %  RAM    Vol Diff  Functions:
 0    706   1    3   3485  5.4  check_reset
 0   2568   3    7   8067  6.0  CheckAutoReset
 0   2596   3    7  23283 11.0  MAIN
-0     58   0    0             @goto44511
-0     58   0    0             @goto44537
+0     58   0    0             @goto15147
+0     58   0    0             @goto15174
 0     10   0    0             @const1210
  Inline         0             @cinit1
 
 Program metrics:
     Functions               45
-    Statements              4855
-    Comments                2579
-    Volume (V)              735638
-    Difficulty (D)          250.0
-    Effort to implement (E) 183935067
-    Time to implement (T)   2838 hours, 30 minutes
+    Statements              4859
+    Comments                2527
+    Volume (V)              736006
+    Difficulty (D)          251.0
+    Effort to implement (E) 184757984
+    Time to implement (T)   2851 hours, 12 minutes
     Est Delivered Bugs (B)  108
-    Cyclomatic Complexity   1398
-    Maintainability (MI)    0
+    Cyclomatic Complexity   1399
+    Maintainability (MI)    -3
 
  Segment     Used  Free
 -----------  ----  ----
 00000-00002     4  0  
 00004-00006     0  4  
 00008-000B8   178  0  
-000BA-0FFFE  44854  20496  
+000BA-0FFFE  44882  20468  
 
 
 
