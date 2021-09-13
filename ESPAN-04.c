@@ -603,7 +603,6 @@ void checkCommand(void)
       RxD_DataLen ++ ;
       sequence = byte_count_sq;
       T_timeout = 0x14; //200ms
-
    }
    else if(sequence == byte_count_sq)
    {
@@ -2889,7 +2888,7 @@ void Read_Config(void)
    FaultDelayTime[19] = read_eeprom(0x30);
    FaultDelayTime[20] = read_eeprom(0x31);
    
-      unsigned int  a = 0; 
+   unsigned int  a = 0; 
    unsigned char  phonenum;
    for(; ; a++)
    {
@@ -3628,7 +3627,7 @@ void Anal_Function(void)
               
               fprintf(CH2,SMS_Massage3);
               putc('\n',CH2);
-             putc(26,CH2);
+              putc(26,CH2);
             }
       }
       else
@@ -3821,7 +3820,6 @@ void Anal_Function(void)
       }
       else
       {
-         Output.B5 = 1;
          Output.B5 = 1;
          SendSMS.B5 =0;
          functointest_f =0;
